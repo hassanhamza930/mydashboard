@@ -17,13 +17,13 @@ const ResizeableBox: React.FC<Props> = ({
 }) => {
   return (
     <ResizableBox
-      width={width || 200}
-      height={height || 200}
+      width={width || 400}
+      height={height || 900}
       className={className}
       style={{
         border: "1px solid #ccc",
-        resize: "both",
-        overflow: "auto",
+        resize: "horizontal",
+        overflow: "hidden",
       }}
     >
       {children}

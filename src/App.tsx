@@ -1,3 +1,5 @@
+import ResizeableBox from "./components/ResizeableBox";
+
 const webviewArr: string[] = [
   "https://github.com",
   "https://www.baidu.com",
@@ -6,17 +8,22 @@ const webviewArr: string[] = [
 
 function App() {
   return (
-    <div className="flex items-center justify-center gap-5 ">
-      {webviewArr.map((item, index) => {
-        return (
-          <webview
-            key={index}
-            src={item}
-            style={{ width: "100%", height: "50vh" }}
-          />
-        );
-      })}
-    </div>
+    <>
+      {" "}
+      <div className="flex flex-wrap ">
+        {webviewArr.map((item, index) => {
+          return (
+            <ResizeableBox>
+              <webview
+                key={index}
+                src={item}
+                style={{ width: "100%", height: "50vh" }}
+              />{" "}
+            </ResizeableBox>
+          );
+        })}
+      </div>
+    </>
   );
 }
 

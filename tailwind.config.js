@@ -8,7 +8,15 @@ module.exports = {
     "./src/**/*.tsx",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        "bg-color": "#EDFAFF",
+        primary: "#1F63EA",
+        black: "#000000",
+        darkgray: "#47474E",
+        lightgray: "#FAFAFA",
+      },
+    },
   },
   plugins: [],
 };

@@ -22,18 +22,9 @@ export const Home = () => {
               }}
               maxHeight={"50%"}
               style={{ position: "relative" }}
-              className="flex justify-end items-end m-1"
+              className="flex justify-end items-end m-1 relative"
             >
-              <div
-                className="
-
-                p-2
-                rounded-xl
-                shadow-md
-                bg-boardBack
-                pt-10
-              "
-              >
+              <div>
                 <webview
                   key={index}
                   src={item}

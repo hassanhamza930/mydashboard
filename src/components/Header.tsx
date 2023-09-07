@@ -1,8 +1,7 @@
-import { signOut } from "firebase/auth";
+import { getAuth, signOut } from "firebase/auth";
 import { useNavigate } from "react-router-dom";
 //
 import SearchInput from "./ui/SearchInput";
-import { auth } from "../config/firebase";
 //
 import logo from "../assets/images/logo2.png";
 import dummyProfile from "../assets/images/dummyProfile.webp";
@@ -11,19 +10,20 @@ import logout from "../assets/icons/logout.svg";
 
 const Header = () => {
   const navigate = useNavigate();
+  const auth = getAuth();
   return (
     <nav className=" ">
       <div className="nav-wrapper flex justify-between items-center px-10 py-5">
-        <div className="logo">
+        <div className="flex justify-center items-center">
           <img src={logo} width={200} alt="logo" />
-        </div>
-        <div className="search ">
+          {/* </div>
+        <div className="search "> */}
           <SearchInput
             type="text"
             placeholder="Search MyDashboard"
             className="
             w-[500px]
-            -ml-20
+            ml-6
             hidden
             lg:flex
             "
@@ -64,6 +64,7 @@ const Header = () => {
             className="cursor-pointer"
             onClick={async () => {
               await signOut(auth);
+              await auth.signOut();
               navigate("/login");
             }}
             alt=""

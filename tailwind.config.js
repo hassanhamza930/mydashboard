@@ -11,6 +11,7 @@ module.exports = {
     extend: {
       colors: {
         "bg-color": "#EDFAFF",
+        boardBack: "#90CAF9",
         primary: "#1F63EA",
         black: "#000000",
         darkgray: "#47474E",

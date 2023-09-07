@@ -1,4 +1,7 @@
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { toast } from "react-hot-toast";
 //
 import dashboardScreens from "../../assets/images/dashboardScreens.png";
 import logo from "../../assets/images/logo.png";
@@ -7,8 +10,36 @@ import facebookIcon from "../../assets/icons/facebook.png";
 //
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
+import { auth } from "../../config/firebase";
+import {
+  handleFacebookSignIn,
+  loginWithGoogle,
+} from "../../helper/firebaseAuth";
 
 export const Login = () => {
+  const navigate = useNavigate();
+
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  const handleLogin = async (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
+  ) => {
+    e.preventDefault();
+
+    await signInWithEmailAndPassword(auth, email, password)
+      .then((user) => {
+        if (user) {
+          toast.success("Logged in successfully");
+          navigate("/");
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        toast.error(error.code);
+      });
+  };
+
   return (
     <section
       className="
@@ -42,19 +73,37 @@ export const Login = () => {
             <img src={logo} alt="logo" width={40} />
             <h2 className="font-semibold text-2xl my-5">Login</h2>
           </div>
-          <div className="w-full flex flex-col justify-center items-center">
+          <form className="w-full flex flex-col justify-center items-center">
             <div className="w-full p-5 max-w-[400px]">
               <label className="ml-1 font-semibold opacity-80">Email</label>
               <br />
-              <Input placeholder="abc@gmail.com" type="email" />
+              <Input
+                value={email}
+                required
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="abc@gmail.com"
+                type="email"
+              />
             </div>
             <div className="w-full p-5 max-w-[400px]">
               <label className="ml-1 font-semibold opacity-80">Password</label>
               <br />
-              <Input placeholder="*************" type="password" />
+              <Input
+                required
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="*************"
+                type="password"
+              />
             </div>
 
-            <Button className="max-w-[300px] my-10">Log in</Button>
+            <Button
+              type="submit"
+              onClick={handleLogin}
+              className="max-w-[300px] my-10"
+            >
+              Log in
+            </Button>
 
             <div className="flex justify-center items-center gap-3 w-full">
               <div className="w-1/4 bg-darkgray h-[1px] opacity-40" />
@@ -63,10 +112,46 @@ export const Login = () => {
             </div>
 
             <div className="flex gap-5 py-4">
-              <img src={googleIcon} width={35} alt="google icon" />
-              <img src={facebookIcon} width={35} alt="facebook icon" />
+              <img
+                src={googleIcon}
+                className="cursor-pointer"
+                onClick={() =>
+                  loginWithGoogle()
+                    .then((user) => {
+                      if (user) {
+                        toast.success("Logged in successfully");
+                        navigate("/");
+                      }
+                    })
+                    .catch((error) => {
+                      console.error(error);
+                      toast.error(error.code);
+                    })
+                }
+                width={35}
+                alt="google icon"
+              />
+              <img
+                src={facebookIcon}
+                className="cursor-pointer"
+                onClick={() =>
+                  handleFacebookSignIn()
+                    .then((user) => {
+                      if (user) {
+                        toast.success("Logged in successfully");
+                        navigate("/");
+                      }
+                    })
+                    .catch((error) => {
+                      console.error(error);
+                      toast.error(error.code);
+                    })
+                }
+                width={35}
+                alt="facebook icon"
+              />
             </div>
-          </div>
+          </form>
           <p className="mt-10 -mb-10">
             Don't have an account?{" "}
             <Link

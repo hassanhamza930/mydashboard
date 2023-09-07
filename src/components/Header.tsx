@@ -1,10 +1,16 @@
+import { signOut } from "firebase/auth";
+import { useNavigate } from "react-router-dom";
+//
+import SearchInput from "./ui/SearchInput";
+import { auth } from "../config/firebase";
+//
 import logo from "../assets/images/logo2.png";
 import dummyProfile from "../assets/images/dummyProfile.webp";
 import notification from "../assets/icons/notification.svg";
 import logout from "../assets/icons/logout.svg";
-import SearchInput from "./ui/SearchInput";
 
 const Header = () => {
+  const navigate = useNavigate();
   return (
     <nav className=" ">
       <div className="nav-wrapper flex justify-between items-center px-10 py-5">
@@ -47,8 +53,21 @@ const Header = () => {
             </div>
           </div>
 
-          <img src={notification} alt="" />
-          <img src={logout} alt="" />
+          <img
+            src={notification}
+            className="cursor-pointer"
+            onClick={() => {}}
+            alt=""
+          />
+          <img
+            src={logout}
+            className="cursor-pointer"
+            onClick={async () => {
+              await signOut(auth);
+              navigate("/login");
+            }}
+            alt=""
+          />
         </div>
       </div>
     </nav>

@@ -1,15 +1,51 @@
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-hot-toast/headless";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+//
+import { auth } from "../../config/firebase";
+import Button from "../../components/ui/Button";
+import Input from "../../components/ui/Input";
 //
 import dashboardScreens from "../../assets/images/signupImg.png";
 import logo from "../../assets/images/logo.png";
 import googleIcon from "../../assets/icons/google.png";
 import facebookIcon from "../../assets/icons/facebook.png";
-//
-import Button from "../../components/ui/Button";
-import Input from "../../components/ui/Input";
+import {
+  handleFacebookSignIn,
+  loginWithGoogle,
+} from "../../helper/firebaseAuth";
 
 export const SignUp = () => {
   const navigate = useNavigate();
+
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  const handleSignUp = async () => {
+    try {
+      // Create the user with email and password
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      // Update the user's display name (name)
+      if (userCredential.user) {
+        await updateProfile(userCredential.user, {
+          displayName: name,
+        });
+      }
+
+      toast.success("Account created successfully");
+      navigate("/");
+    } catch (error: any) {
+      toast.error(error.code);
+    }
+  };
+
   return (
     <section
       className="
@@ -47,25 +83,35 @@ export const SignUp = () => {
             <div className="w-full p-4 max-w-[400px]">
               <label className="ml-1 font-semibold opacity-80">Name</label>
               <br />
-              <Input placeholder="Full Name" type="email" />
+              <Input
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                placeholder="Full Name"
+                type="email"
+              />
             </div>
             <div className="w-full p-4 max-w-[400px]">
               <label className="ml-1 font-semibold opacity-80">Email</label>
               <br />
-              <Input placeholder="abc@gmail.com" type="email" />
+              <Input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="abc@gmail.com"
+                type="email"
+              />
             </div>
             <div className="w-full p-4 max-w-[400px]">
               <label className="ml-1 font-semibold opacity-80">Password</label>
               <br />
-              <Input placeholder="*************" type="password" />
+              <Input
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="*************"
+                type="password"
+              />
             </div>
 
-            <Button
-              onClick={() => {
-                navigate("/");
-              }}
-              className="max-w-[300px] my-10"
-            >
+            <Button onClick={handleSignUp} className="max-w-[300px] my-10">
               Sign Up
             </Button>
 
@@ -76,8 +122,44 @@ export const SignUp = () => {
             </div>
 
             <div className="flex gap-5 py-4">
-              <img src={googleIcon} width={35} alt="google icon" />
-              <img src={facebookIcon} width={35} alt="facebook icon" />
+              <img
+                src={googleIcon}
+                className="cursor-pointer"
+                onClick={() =>
+                  loginWithGoogle()
+                    .then((user) => {
+                      if (user) {
+                        toast.success("Logged in successfully");
+                        navigate("/");
+                      }
+                    })
+                    .catch((error) => {
+                      console.error(error);
+                      toast.error(error.code);
+                    })
+                }
+                width={35}
+                alt="google icon"
+              />
+              <img
+                src={facebookIcon}
+                className="cursor-pointer"
+                onClick={() =>
+                  handleFacebookSignIn()
+                    .then((user) => {
+                      if (user) {
+                        toast.success("Logged in successfully");
+                        navigate("/");
+                      }
+                    })
+                    .catch((error) => {
+                      console.error(error);
+                      toast.error(error.code);
+                    })
+                }
+                width={35}
+                alt="facebook icon"
+              />
             </div>
           </div>
           <p className="mt-10 -mb-10">

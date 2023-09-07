@@ -39,10 +39,10 @@ export const SignUp = () => {
         });
       }
 
-      toast.success("Account created successfully");
+      alert("Account created successfully");
       navigate("/");
     } catch (error: any) {
-      toast.error(error.code);
+      alert(error.code);
     }
   };
 

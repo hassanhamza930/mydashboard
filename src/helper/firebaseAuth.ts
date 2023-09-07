@@ -9,6 +9,9 @@ export const loginWithGoogle = async () => {
   return new Promise((resolve, reject) => {
     auth.signOut();
     const provider = new GoogleAuthProvider();
+    provider.setCustomParameters({
+      prompt: 'select_account'
+    });
     signInWithPopup(auth, provider)
       .then((result) => {
         resolve(result);

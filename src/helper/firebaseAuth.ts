@@ -10,7 +10,7 @@ export const loginWithGoogle = async () => {
     auth.signOut();
     const provider = new GoogleAuthProvider();
     provider.setCustomParameters({
-      prompt: 'select_account'
+      prompt: "select_account",
     });
     signInWithPopup(auth, provider)
       .then((result) => {

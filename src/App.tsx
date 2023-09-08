@@ -25,14 +25,14 @@ function App() {
         <Routes>
           {!user && (
             <>
-              <Route path="/login" element={<Login />} />
+              <Route path="/" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
             </>
           )}
           <Route element={<Layout />}>
-            <Route path="/" element={<Home />} />
+            <Route path="/dashboard" element={<Home />} />
           </Route>
-          <Route path="*" element={<Navigate to="/login" />} />
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </HashRouter>
     </>

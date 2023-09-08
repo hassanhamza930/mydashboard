@@ -40,7 +40,7 @@ export const SignUp = () => {
       }
 
       alert("Account created successfully");
-      navigate("/");
+      navigate("/dashboard");
     } catch (error: any) {
       alert(error.code);
     }
@@ -130,7 +130,7 @@ export const SignUp = () => {
                     .then((user) => {
                       if (user) {
                         toast.success("Logged in successfully");
-                        navigate("/");
+                        navigate("/dashboard");
                       }
                     })
                     .catch((error) => {
@@ -149,7 +149,7 @@ export const SignUp = () => {
                     .then((user) => {
                       if (user) {
                         toast.success("Logged in successfully");
-                        navigate("/");
+                        navigate("/dashboard");
                       }
                     })
                     .catch((error) => {
@@ -168,7 +168,7 @@ export const SignUp = () => {
               className="
         text-primary
       "
-              to="/login"
+              to="/"
             >
               login
             </Link>

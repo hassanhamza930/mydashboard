@@ -63,7 +63,7 @@ const Header = () => {
             src={logout}
             className="cursor-pointer"
             onClick={async () => {
-              navigate("/login");
+              navigate("/");
               await signOut(auth);
               await auth.signOut();
             }}

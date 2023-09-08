@@ -15,9 +15,20 @@ import {
   handleFacebookSignIn,
   loginWithGoogle,
 } from "../../helper/firebaseAuth";
+// import { useGoogleLogin } from "@react-oauth/google";
 
 export const Login = () => {
   const navigate = useNavigate();
+
+  const ipcRenderer = (window as any).ipcRenderer;
+
+  // const loginGoogle = useGoogleLogin({
+  //   onSuccess: (codeResponse) => console.log(codeResponse),
+  //   // redirectUri: "http://localhost:3000/dashboard",",
+  //   select_account: true,
+  //   redirect_uri: "",
+  //   flow: "auth-code",
+  // });
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -31,13 +42,39 @@ export const Login = () => {
       .then((user) => {
         if (user) {
           toast.success("Logged in successfully");
-          navigate("/");
+          navigate("/dashboard");
         }
       })
       .catch((error) => {
         console.error(error);
         toast.error(error.code);
       });
+  };
+
+  // useEffect(() => {
+  //   // Listen for OAuth callback in the main process
+  //   ipcRenderer.on("google-oauth-callback", (event: any, callbackUrl: any) => {
+  //     // Handle the callback URL here
+  //     console.log("OAuth callback URL:", callbackUrl);
+  //   });
+
+  //   // Clean up the listener when the component unmounts
+  //   return () => {
+  //     ipcRenderer.removeAllListeners("google-oauth-callback");
+  //   };
+  // }, []);
+
+  const handleGoogleSignIn = () => {
+    // Define your Google OAuth URL with the appropriate parameters
+    const googleOAuthUrl =
+      "https://accounts.google.com/o/oauth2/auth?" +
+      "response_type=code&" +
+      "client_id=539580232204-b1630o2p9l3co55ljvv74445sbalj3mr.apps.googleusercontent.com&" + // Replace with your client ID
+      `redirect_uri=http://localhost:9090/oauth-callback&` + // Use the Express server URL
+      "scope=https://www.googleapis.com/auth/userinfo.profile"; // Adjust scopes as needed
+
+    // Send the URL to the main process to open in an external browser
+    ipcRenderer.send("open-external-browser", { url: googleOAuthUrl });
   };
 
   return (
@@ -120,7 +157,7 @@ export const Login = () => {
                     .then((user) => {
                       if (user) {
                         toast.success("Logged in successfully");
-                        navigate("/");
+                        navigate("/dashboard");
                       }
                     })
                     .catch((error) => {
@@ -139,7 +176,7 @@ export const Login = () => {
                     .then((user) => {
                       if (user) {
                         toast.success("Logged in successfully");
-                        navigate("/");
+                        navigate("/dashboard");
                       }
                     })
                     .catch((error) => {
@@ -162,6 +199,7 @@ export const Login = () => {
             >
               Create free account
             </Link>
+            <button onClick={handleGoogleSignIn}>Open External Webpage</button>
           </p>
         </div>
       </div>

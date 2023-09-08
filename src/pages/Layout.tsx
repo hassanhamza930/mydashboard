@@ -10,7 +10,7 @@ export const Layout = () => {
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (!user) {
-        navigate("/login");
+        navigate("/");
       }
     });
     // Clean up the observer when the component unmounts

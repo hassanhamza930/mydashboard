@@ -1,8 +1,21 @@
-import { Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
+import { auth } from "../config/firebase";
 import Sidebar from "../components/Sidebar";
 import Header from "../components/Header";
 
 export const Layout = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (!user) {
+        navigate("/login");
+      }
+    });
+    // Clean up the observer when the component unmounts
+    return () => unsubscribe();
+  }, []);
   return (
     <main className="w-full max-h-full min-h-[100vh] bg-bg-color">
       <Header />

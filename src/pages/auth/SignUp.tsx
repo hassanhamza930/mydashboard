@@ -1,7 +1,12 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-hot-toast/headless";
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  signInWithCredential,
+  updateProfile,
+} from "firebase/auth";
 //
 import { auth } from "../../config/firebase";
 import Button from "../../components/ui/Button";
@@ -10,11 +15,6 @@ import Input from "../../components/ui/Input";
 import dashboardScreens from "../../assets/images/signupImg.png";
 import logo from "../../assets/images/logo.png";
 import googleIcon from "../../assets/icons/google.png";
-import facebookIcon from "../../assets/icons/facebook.png";
-import {
-  handleFacebookSignIn,
-  loginWithGoogle,
-} from "../../helper/firebaseAuth";
 
 export const SignUp = () => {
   const navigate = useNavigate();
@@ -45,6 +45,40 @@ export const SignUp = () => {
       alert(error.code);
     }
   };
+
+  const ipcRenderer = (window as any).ipcRenderer;
+
+  const handleGoogleSignIn = () => {
+    ipcRenderer.send("open-external-browser");
+
+    ipcRenderer.on("token-channel", (event, token) => {
+      if (token) {
+        console.log(token);
+        SignInWithGoogle(token);
+      }
+    });
+  };
+  ipcRenderer.on("oauthIdToken", (event, token) => {
+    if (token) {
+      console.log(token);
+      // Call your signInWithGoogle function with the received token
+      SignInWithGoogle(token);
+    }
+  });
+
+  function SignInWithGoogle(token: string) {
+    const credentials = GoogleAuthProvider.credential(token);
+
+    signInWithCredential(auth, credentials)
+      .then(() => {
+        toast.success("Logged in successfully");
+
+        navigate("/dashboard");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   return (
     <section
@@ -125,23 +159,11 @@ export const SignUp = () => {
               <img
                 src={googleIcon}
                 className="cursor-pointer"
-                onClick={() =>
-                  loginWithGoogle()
-                    .then((user) => {
-                      if (user) {
-                        toast.success("Logged in successfully");
-                        navigate("/dashboard");
-                      }
-                    })
-                    .catch((error) => {
-                      console.error(error);
-                      toast.error(error.code);
-                    })
-                }
+                onClick={handleGoogleSignIn}
                 width={35}
                 alt="google icon"
               />
-              <img
+              {/* <img
                 src={facebookIcon}
                 className="cursor-pointer"
                 onClick={() =>
@@ -159,7 +181,7 @@ export const SignUp = () => {
                 }
                 width={35}
                 alt="facebook icon"
-              />
+              /> */}
             </div>
           </div>
           <p className="mt-10 -mb-10">

@@ -1,34 +1,30 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword } from "firebase/auth";
+import {
+  GoogleAuthProvider,
+  signInWithCredential,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
 import { toast } from "react-hot-toast";
 //
 import dashboardScreens from "../../assets/images/dashboardScreens.png";
 import logo from "../../assets/images/logo.png";
 import googleIcon from "../../assets/icons/google.png";
-import facebookIcon from "../../assets/icons/facebook.png";
+// import facebookIcon from "../../assets/icons/facebook.png";
 //
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import { auth } from "../../config/firebase";
-import {
-  handleFacebookSignIn,
-  loginWithGoogle,
-} from "../../helper/firebaseAuth";
-// import { useGoogleLogin } from "@react-oauth/google";
+// import {
+//   // handleFacebookSignIn,
+//   loginWithGoogle,
+// } from "../../helper/firebaseAuth";
+// // import { useGoogleLogin } from "@react-oauth/google";
 
 export const Login = () => {
   const navigate = useNavigate();
 
   const ipcRenderer = (window as any).ipcRenderer;
-
-  // const loginGoogle = useGoogleLogin({
-  //   onSuccess: (codeResponse) => console.log(codeResponse),
-  //   // redirectUri: "http://localhost:3000/dashboard",",
-  //   select_account: true,
-  //   redirect_uri: "",
-  //   flow: "auth-code",
-  // });
 
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -42,6 +38,7 @@ export const Login = () => {
       .then((user) => {
         if (user) {
           toast.success("Logged in successfully");
+
           navigate("/dashboard");
         }
       })
@@ -51,31 +48,39 @@ export const Login = () => {
       });
   };
 
-  // useEffect(() => {
-  //   // Listen for OAuth callback in the main process
-  //   ipcRenderer.on("google-oauth-callback", (event: any, callbackUrl: any) => {
-  //     // Handle the callback URL here
-  //     console.log("OAuth callback URL:", callbackUrl);
-  //   });
-
-  //   // Clean up the listener when the component unmounts
-  //   return () => {
-  //     ipcRenderer.removeAllListeners("google-oauth-callback");
-  //   };
-  // }, []);
-
   const handleGoogleSignIn = () => {
-    // Define your Google OAuth URL with the appropriate parameters
-    const googleOAuthUrl =
-      "https://accounts.google.com/o/oauth2/auth?" +
-      "response_type=code&" +
-      "client_id=539580232204-b1630o2p9l3co55ljvv74445sbalj3mr.apps.googleusercontent.com&" + // Replace with your client ID
-      `redirect_uri=http://localhost:9090/oauth-callback&` + // Use the Express server URL
-      "scope=https://www.googleapis.com/auth/userinfo.profile"; // Adjust scopes as needed
+    ipcRenderer.send("open-external-browser");
 
-    // Send the URL to the main process to open in an external browser
-    ipcRenderer.send("open-external-browser", { url: googleOAuthUrl });
+    ipcRenderer.on("token-channel", (event, token) => {
+      if (token) {
+        console.log(token);
+        // Call your signInWithGoogle function with the received token
+        SignInWithGoogle(token);
+      }
+    });
   };
+
+  ipcRenderer.on("oauthIdToken", (event, token) => {
+    if (token) {
+      console.log(token);
+      // Call your signInWithGoogle function with the received token
+      SignInWithGoogle(token);
+    }
+  });
+
+  function SignInWithGoogle(token: string) {
+    const credentials = GoogleAuthProvider.credential(token);
+
+    signInWithCredential(auth, credentials)
+      .then(() => {
+        toast.success("Logged in successfully");
+
+        navigate("/dashboard");
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
 
   return (
     <section
@@ -152,23 +157,11 @@ export const Login = () => {
               <img
                 src={googleIcon}
                 className="cursor-pointer"
-                onClick={() =>
-                  loginWithGoogle()
-                    .then((user) => {
-                      if (user) {
-                        toast.success("Logged in successfully");
-                        navigate("/dashboard");
-                      }
-                    })
-                    .catch((error) => {
-                      console.error(error);
-                      toast.error(error.code);
-                    })
-                }
+                onClick={handleGoogleSignIn}
                 width={35}
                 alt="google icon"
               />
-              <img
+              {/* <img
                 src={facebookIcon}
                 className="cursor-pointer"
                 onClick={() =>
@@ -186,7 +179,7 @@ export const Login = () => {
                 }
                 width={35}
                 alt="facebook icon"
-              />
+              /> */}
             </div>
           </form>
           <p className="mt-10 -mb-10">
@@ -199,7 +192,7 @@ export const Login = () => {
             >
               Create free account
             </Link>
-            <button onClick={handleGoogleSignIn}>Open External Webpage</button>
+            {/* <button onClick={handleGoogleSignIn}>Open External Webpage</button> */}
           </p>
         </div>
       </div>

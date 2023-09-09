@@ -12,6 +12,7 @@ function App() {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       if (user) {
         setUser(user);
+        console.log("logedin", user);
       } else {
         setUser(null);
       }

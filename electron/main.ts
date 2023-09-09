@@ -1,33 +1,6 @@
-import { app, BrowserWindow, ipcMain, protocol, shell } from "electron";
+import { app, BrowserWindow, dialog, ipcMain, shell } from "electron";
 import path from "node:path";
-import { installed } from "./creds.json";
-// import ElectronGoogleOAuth2 from "@getstation/electron-google-oauth2";
-import express from "express";
 
-const expressApp = express();
-const port = 9090; // Choose a port number
-
-// Define a route to handle OAuth callback
-expressApp.get("/oauth-callback", (req, res) => {
-  const authorizationCode = req.query.code;
-  // Process the code and obtain tokens as needed
-  res.send("OAuth callback completed");
-});
-
-// Start the Express server
-const expressServer = expressApp.listen(port, () => {
-  console.log(`Express server is running on port ${port}`);
-});
-
-const {
-  // auth_provider_x509_cert_url,
-  // auth_uri,
-  client_id,
-  client_secret,
-  // project_id,
-  redirect_uris,
-  // token_uri,
-} = installed;
 // The built directory structure
 //
 // ├─┬─┬ dist
@@ -37,6 +10,17 @@ const {
 // │ │ ├── main.js
 // │ │ └── preload.js
 // │
+
+if (process.defaultApp) {
+  if (process.argv.length >= 2) {
+    app.setAsDefaultProtocolClient("dashboard", process.execPath, [
+      path.resolve(process.argv[1]),
+    ]);
+  }
+} else {
+  app.setAsDefaultProtocolClient("dashboard");
+}
+
 process.env.DIST = path.join(__dirname, "../dist");
 process.env.PUBLIC = app.isPackaged
   ? process.env.DIST
@@ -48,8 +32,8 @@ const VITE_DEV_SERVER_URL = process.env["VITE_DEV_SERVER_URL"];
 
 function createWindow() {
   win = new BrowserWindow({
-    width: 2000,
-    height: 2000,
+    width: 2500,
+    height: 1500,
     icon: path.join(process.env.PUBLIC, "electron-vite.svg"),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
@@ -69,53 +53,47 @@ function createWindow() {
     win.loadFile(path.join(process.env.DIST, "index.html"));
   }
 }
+// const gotTheLock = app.requestSingleInstanceLock();
 
-app.on("window-all-closed", () => {
-  win = null;
-});
+// if (!gotTheLock) {
+//   app.quit();
+// } else {
 
-// protocol.registerHttpProtocol("the-dashboard", (request, callback) => {
-//   // Handle the request here
-//   // You can parse the URL parameters and perform actions in your app
-//   const url = request.url;
-//   console.log("Custom Protocol URL:", url);
-//   // Handle the URL as needed
-// });
-
-app.whenReady().then(createWindow);
-
+//   });
+// }
 ipcMain.on("open-external-browser", (event, data) => {
-  shell.openExternal(data.url);
+  shell.openExternal(
+    "https://my-dashboard-chi.vercel.app/auth/firebase/google"
+  );
 });
 
-// Handle Google OAuth callback when the user returns
-ipcMain.on("google-oauth-callback", (event, callbackUrl) => {
-  // Parse the callback URL and obtain the 'code' parameter
-  const query = new URL(callbackUrl).searchParams;
-  const code = query.get("code");
+const gotTheLock = app.requestSingleInstanceLock();
 
-  console.log(code);
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on("second-instance", (event, commandLine, workingDirectory) => {
+    const token = commandLine
+      .find((e) => e.includes("oauthIdToken"))
+      ?.split("=")[1];
 
-  // Use the 'code' to exchange for access tokens (You can make an HTTP request here)
-  // Once you have access tokens, you can handle user authentication
+    if (win) {
+      if (win.isMinimized()) win.restore();
+      win.focus();
+    }
+    ipcMain.emit("oauthIdToken", token);
 
-  // Example of handling access token request (use a library like axios)
-  /*
-  axios.post("https://oauth2.googleapis.com/token", {
-    code: code,
-    client_id: "YOUR_CLIENT_ID", // Replace with your client ID
-    client_secret: "YOUR_CLIENT_SECRET", // Replace with your client secret
-    redirect_uri: "http://localhost", // Replace with your redirect URI
-    grant_type: "authorization_code",
-  })
-  .then(response => {
-    // Handle the response to obtain access tokens
-    const accessToken = response.data.access_token;
-    const refreshToken = response.data.refresh_token;
-    // ... (Handle authentication with the tokens)
-  })
-  .catch(error => {
-    console.error("Error exchanging code for tokens:", error);
+    win.webContents.send("oauthIdToken", token);
   });
-  */
-});
+  app.on("open-url", (event, url) => {
+    console.log("Received custom protocol URL:", url);
+    const token = new URL(url).searchParams.get("oauthIdToken");
+    console.log("OAuth ID Token:", token);
+    // ...
+  });
+
+  app.on("window-all-closed", () => {
+    win = null;
+  });
+}
+app.whenReady().then(createWindow);

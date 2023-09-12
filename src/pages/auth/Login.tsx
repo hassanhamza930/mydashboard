@@ -1,86 +1,40 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import {
-  GoogleAuthProvider,
-  signInWithCredential,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
-import { toast } from "react-hot-toast";
 //
 import dashboardScreens from "../../assets/images/dashboardScreens.png";
 import logo from "../../assets/images/logo.png";
 import googleIcon from "../../assets/icons/google.png";
-// import facebookIcon from "../../assets/icons/facebook.png";
+import facebookIcon from "../../assets/icons/facebook.png";
 //
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
-import { auth } from "../../config/firebase";
-// import {
-//   // handleFacebookSignIn,
-//   loginWithGoogle,
-// } from "../../helper/firebaseAuth";
-// // import { useGoogleLogin } from "@react-oauth/google";
+import {
+  handleGoogleSignIn,
+  handleFacebookSignIn,
+  handleLogin,
+  SignInWithGoogle,
+  SignInWithFacebook,
+} from "../../helper/auth";
 
 export const Login = () => {
   const navigate = useNavigate();
-
-  const ipcRenderer = (window as any).ipcRenderer;
-
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const handleLogin = async (
-    e: React.MouseEvent<HTMLButtonElement, MouseEvent>
-  ) => {
-    e.preventDefault();
-
-    await signInWithEmailAndPassword(auth, email, password)
-      .then((user) => {
-        if (user) {
-          toast.success("Logged in successfully");
-
-          navigate("/dashboard");
-        }
-      })
-      .catch((error) => {
-        console.error(error);
-        toast.error(error.code);
-      });
-  };
-
-  const handleGoogleSignIn = () => {
-    ipcRenderer.send("open-external-browser");
-
-    ipcRenderer.on("token-channel", (event, token) => {
-      if (token) {
-        console.log(token);
-        // Call your signInWithGoogle function with the received token
-        SignInWithGoogle(token);
-      }
-    });
-  };
+  const ipcRenderer = (window as any).ipcRenderer;
 
   ipcRenderer.on("oauthIdToken", (event, token) => {
     if (token) {
-      console.log(token);
-      // Call your signInWithGoogle function with the received token
-      SignInWithGoogle(token);
+      SignInWithGoogle(token, navigate);
     }
   });
-
-  function SignInWithGoogle(token: string) {
-    const credentials = GoogleAuthProvider.credential(token);
-
-    signInWithCredential(auth, credentials)
-      .then(() => {
-        toast.success("Logged in successfully");
-
-        navigate("/dashboard");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
+  ipcRenderer.on("facebookAuthIdToken", (event, token) => {
+    if (token) {
+      console.log(token);
+      // Call your signInWithGoogle function with the received token
+      SignInWithFacebook(token, navigate);
+    }
+  });
 
   return (
     <section
@@ -141,7 +95,7 @@ export const Login = () => {
 
             <Button
               type="submit"
-              onClick={handleLogin}
+              onClick={(e) => handleLogin(e, email, password, navigate)}
               className="max-w-[300px] my-10"
             >
               Log in
@@ -157,29 +111,17 @@ export const Login = () => {
               <img
                 src={googleIcon}
                 className="cursor-pointer"
-                onClick={handleGoogleSignIn}
+                onClick={() => handleGoogleSignIn(ipcRenderer, navigate)}
                 width={35}
                 alt="google icon"
               />
-              {/* <img
+              <img
                 src={facebookIcon}
                 className="cursor-pointer"
-                onClick={() =>
-                  handleFacebookSignIn()
-                    .then((user) => {
-                      if (user) {
-                        toast.success("Logged in successfully");
-                        navigate("/dashboard");
-                      }
-                    })
-                    .catch((error) => {
-                      console.error(error);
-                      toast.error(error.code);
-                    })
-                }
+                onClick={() => handleFacebookSignIn(ipcRenderer, navigate)}
                 width={35}
                 alt="facebook icon"
-              /> */}
+              />
             </div>
           </form>
           <p className="mt-10 -mb-10">

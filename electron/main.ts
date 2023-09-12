@@ -62,9 +62,7 @@ function createWindow() {
 //   });
 // }
 ipcMain.on("open-external-browser", (event, data) => {
-  shell.openExternal(
-    "https://my-dashboard-chi.vercel.app/auth/firebase/google"
-  );
+  shell.openExternal(data);
 });
 
 const gotTheLock = app.requestSingleInstanceLock();
@@ -73,17 +71,26 @@ if (!gotTheLock) {
   app.quit();
 } else {
   app.on("second-instance", (event, commandLine, workingDirectory) => {
-    const token = commandLine
-      .find((e) => e.includes("oauthIdToken"))
+    const googleToken = commandLine
+      ?.find((e) => e.includes("oauthIdToken"))
+      ?.split("=")[1];
+    const facebookToken = commandLine
+      ?.find((e) => e.includes("facebookIdToken"))
       ?.split("=")[1];
 
     if (win) {
       if (win.isMinimized()) win.restore();
       win.focus();
     }
-    ipcMain.emit("oauthIdToken", token);
 
-    win.webContents.send("oauthIdToken", token);
+    if (!googleToken) {
+      ipcMain.emit("facebookAuthIdToken", facebookToken);
+      win.webContents.send("facebookAuthIdToken", facebookToken);
+      return;
+    }
+
+    ipcMain.emit("oauthIdToken", googleToken);
+    win.webContents.send("oauthIdToken", googleToken);
   });
   app.on("open-url", (event, url) => {
     console.log("Received custom protocol URL:", url);

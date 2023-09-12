@@ -1,84 +1,39 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-hot-toast/headless";
-import {
-  GoogleAuthProvider,
-  createUserWithEmailAndPassword,
-  signInWithCredential,
-  updateProfile,
-} from "firebase/auth";
 //
-import { auth } from "../../config/firebase";
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 //
 import dashboardScreens from "../../assets/images/signupImg.png";
 import logo from "../../assets/images/logo.png";
 import googleIcon from "../../assets/icons/google.png";
+import facebookIcon from "../../assets/icons/facebook.png";
+import {
+  SignInWithFacebook,
+  SignInWithGoogle,
+  handleFacebookSignIn,
+  handleGoogleSignIn,
+  handleSignUp,
+} from "../../helper/auth";
 
 export const SignUp = () => {
   const navigate = useNavigate();
-
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const handleSignUp = async () => {
-    try {
-      // Create the user with email and password
-      const userCredential = await createUserWithEmailAndPassword(
-        auth,
-        email,
-        password
-      );
-
-      // Update the user's display name (name)
-      if (userCredential.user) {
-        await updateProfile(userCredential.user, {
-          displayName: name,
-        });
-      }
-
-      alert("Account created successfully");
-      navigate("/dashboard");
-    } catch (error: any) {
-      alert(error.code);
-    }
-  };
-
   const ipcRenderer = (window as any).ipcRenderer;
 
-  const handleGoogleSignIn = () => {
-    ipcRenderer.send("open-external-browser");
-
-    ipcRenderer.on("token-channel", (event, token) => {
-      if (token) {
-        console.log(token);
-        SignInWithGoogle(token);
-      }
-    });
-  };
   ipcRenderer.on("oauthIdToken", (event, token) => {
     if (token) {
-      console.log(token);
-      // Call your signInWithGoogle function with the received token
-      SignInWithGoogle(token);
+      SignInWithGoogle(token, navigate);
     }
   });
-
-  function SignInWithGoogle(token: string) {
-    const credentials = GoogleAuthProvider.credential(token);
-
-    signInWithCredential(auth, credentials)
-      .then(() => {
-        toast.success("Logged in successfully");
-
-        navigate("/dashboard");
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
+  ipcRenderer.on("facebookAuthIdToken", (event, token) => {
+    if (token) {
+      SignInWithFacebook(token, navigate);
+    }
+  });
 
   return (
     <section
@@ -145,7 +100,10 @@ export const SignUp = () => {
               />
             </div>
 
-            <Button onClick={handleSignUp} className="max-w-[300px] my-10">
+            <Button
+              onClick={(e) => handleSignUp(e, name, email, password, navigate)}
+              className="max-w-[300px] my-10"
+            >
               Sign Up
             </Button>
 
@@ -159,29 +117,17 @@ export const SignUp = () => {
               <img
                 src={googleIcon}
                 className="cursor-pointer"
-                onClick={handleGoogleSignIn}
+                onClick={() => handleGoogleSignIn(ipcRenderer, navigate)}
                 width={35}
                 alt="google icon"
               />
-              {/* <img
+              <img
                 src={facebookIcon}
                 className="cursor-pointer"
-                onClick={() =>
-                  handleFacebookSignIn()
-                    .then((user) => {
-                      if (user) {
-                        toast.success("Logged in successfully");
-                        navigate("/dashboard");
-                      }
-                    })
-                    .catch((error) => {
-                      console.error(error);
-                      toast.error(error.code);
-                    })
-                }
+                onClick={() => handleFacebookSignIn(ipcRenderer, navigate)}
                 width={35}
                 alt="facebook icon"
-              /> */}
+              />
             </div>
           </div>
           <p className="mt-10 -mb-10">

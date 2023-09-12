@@ -2,6 +2,8 @@
   "name": "the-dashboard",
   "private": true,
   "version": "0.0.0",
+  "description": "MyDashboard",
+  "author": "MyDashboard",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build && electron-builder --mac",

@@ -77,18 +77,31 @@ if (!gotTheLock) {
     const facebookToken = commandLine
       ?.find((e) => e.includes("facebookIdToken"))
       ?.split("=")[1];
+    const microsoftToken = commandLine
+      ?.find((e) => e.includes("microsoftIdToken"))
+      ?.split("=")[1];
+
+    // console.log("googleToken", googleToken);
+    // console.log("facebookToken", facebookToken);
+    // console.log("microsoftToken", microsoftToken);
 
     if (win) {
       if (win.isMinimized()) win.restore();
       win.focus();
     }
 
-    if (!googleToken) {
+    if (facebookToken) {
+      console.log("facebookAuthIdToken");
       ipcMain.emit("facebookAuthIdToken", facebookToken);
       win.webContents.send("facebookAuthIdToken", facebookToken);
       return;
+    } else if (microsoftToken) {
+      console.log("microsoftAuthIdToken");
+      ipcMain.emit("microsoftAuthIdToken", microsoftToken);
+      win.webContents.send("microsoftAuthIdToken", microsoftToken);
+      return;
     }
-
+    console.log("oauthIdToken");
     ipcMain.emit("oauthIdToken", googleToken);
     win.webContents.send("oauthIdToken", googleToken);
   });

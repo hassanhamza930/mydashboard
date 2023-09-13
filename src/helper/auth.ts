@@ -3,6 +3,7 @@ import toast from "react-hot-toast";
 import {
   FacebookAuthProvider,
   GoogleAuthProvider,
+  OAuthProvider,
   createUserWithEmailAndPassword,
   signInWithCredential,
   signInWithEmailAndPassword,
@@ -36,6 +37,35 @@ export const handleGoogleSignIn = (ipcRenderer, navigate) => {
  * @param ipcRenderer
  * @param navigate
  */
+export const handleMicrosoftSignIn = (ipcRenderer, navigate) => {
+  ipcRenderer.send(
+    "open-external-browser",
+    "https://my-dashboard-chi.vercel.app/auth/firebase/microsoft"
+  );
+
+  ipcRenderer.on("token-channel", async (event, token) => {
+    if (token) {
+      try {
+        const provider = new OAuthProvider("microsoft.com");
+        const credentials = provider.credential({
+          idToken: token,
+          // accessToken: token,
+        });
+        await CredentialSignIn(credentials, navigate);
+      } catch (error) {
+        console.error("Error handling Microsoft sign-in:", error);
+      }
+    } else {
+      console.error("Received invalid or missing Microsoft token.");
+    }
+  });
+};
+
+/**
+ *
+ * @param ipcRenderer
+ * @param navigate
+ */
 export const handleFacebookSignIn = (ipcRenderer, navigate) => {
   ipcRenderer.send(
     "open-external-browser",
@@ -56,14 +86,15 @@ export const handleFacebookSignIn = (ipcRenderer, navigate) => {
  * @param navigate
  */
 export function CredentialSignIn(credentials, navigate) {
+  // //console.log("credentials", credentials);
   signInWithCredential(auth, credentials)
     .then(() => {
-      toast.success("Logged in successfully");
+      // toast.success("Logged in successfully");
 
       navigate("/dashboard");
     })
     .catch((error) => {
-      console.log(error);
+      //console.log(error);
       toast.error(error.code);
     });
 }
@@ -112,7 +143,7 @@ export function SignInWithGoogle(token: string, navigate: NavigateFunction) {
       navigate("/dashboard");
     })
     .catch((error) => {
-      console.log(error);
+      //console.log(error);
       toast.error(error.code);
     });
 }
@@ -132,9 +163,42 @@ export function SignInWithFacebook(token: string, navigate: NavigateFunction) {
       navigate("/dashboard");
     })
     .catch((error) => {
-      console.log(error);
+      //console.log(error);
       toast.error(error.code);
     });
+}
+
+/**
+ *
+ * @param token
+ * @param navigate
+ */
+export async function SignInWithMicrosoft(token, navigate: NavigateFunction) {
+  try {
+    // Create an OAuth provider for Microsoft.
+    const provider = new OAuthProvider("microsoft.com");
+
+    // Set the OAuth ID token directly (without using accessToken).
+    provider.setCustomParameters({
+      id_token: token,
+    });
+
+    // Sign in with the credential.
+    const credential = provider.credential({
+      idToken: token,
+    });
+
+    const userCredential = await signInWithCredential(auth, credential);
+    const user = userCredential.user;
+
+    // Now, you have signed in the user with Microsoft OAuth.
+    console.log("User signed in:", user);
+
+    return user; // You can return the user object if needed.
+  } catch (error) {
+    console.error("Error signing in with Microsoft OAuth token:", error);
+    throw error;
+  }
 }
 
 /**
@@ -170,7 +234,7 @@ export const handleSignUp = async (
     toast.success("Account created successfully");
     navigate("/dashboard");
   } catch (error: any) {
-    console.log(error);
+    //console.log(error);
     toast.error(error.code);
   }
 };

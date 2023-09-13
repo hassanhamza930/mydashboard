@@ -10,10 +10,12 @@ import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import {
   handleGoogleSignIn,
-  handleFacebookSignIn,
+  // handleFacebookSignIn,
   handleLogin,
   SignInWithGoogle,
   SignInWithFacebook,
+  handleMicrosoftSignIn,
+  SignInWithMicrosoft,
 } from "../../helper/auth";
 
 export const Login = () => {
@@ -33,6 +35,13 @@ export const Login = () => {
       console.log(token);
       // Call your signInWithGoogle function with the received token
       SignInWithFacebook(token, navigate);
+    }
+  });
+  ipcRenderer.on("microsoftAuthIdToken", (event, token) => {
+    console.log("microsoftAuthIdToken");
+    if (token) {
+      // console.log(token);
+      SignInWithMicrosoft(token, navigate);
     }
   });
 
@@ -115,13 +124,13 @@ export const Login = () => {
                 width={35}
                 alt="google icon"
               />
-              <img
+              {/* <img
                 src={facebookIcon}
                 className="cursor-pointer"
-                onClick={() => handleFacebookSignIn(ipcRenderer, navigate)}
+                onClick={() => handleMicrosoftSignIn(ipcRenderer, navigate)}
                 width={35}
                 alt="facebook icon"
-              />
+              /> */}
             </div>
           </form>
           <p className="mt-10 -mb-10">

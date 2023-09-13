@@ -7,11 +7,11 @@ import Input from "../../components/ui/Input";
 import dashboardScreens from "../../assets/images/signupImg.png";
 import logo from "../../assets/images/logo.png";
 import googleIcon from "../../assets/icons/google.png";
-import facebookIcon from "../../assets/icons/facebook.png";
+// import facebookIcon from "../../assets/icons/facebook.png";
 import {
   SignInWithFacebook,
   SignInWithGoogle,
-  handleFacebookSignIn,
+  // handleFacebookSignIn,
   handleGoogleSignIn,
   handleSignUp,
 } from "../../helper/auth";
@@ -101,7 +101,7 @@ export const SignUp = () => {
             </div>
 
             <Button
-              onClick={(e) => handleSignUp(e, name, email, password, navigate)}
+              onClick={(e) => handleSignUp(e, email, password, name, navigate)}
               className="max-w-[300px] my-10"
             >
               Sign Up
@@ -121,13 +121,13 @@ export const SignUp = () => {
                 width={35}
                 alt="google icon"
               />
-              <img
+              {/* <img
                 src={facebookIcon}
                 className="cursor-pointer"
                 onClick={() => handleFacebookSignIn(ipcRenderer, navigate)}
                 width={35}
                 alt="facebook icon"
-              />
+              /> */}
             </div>
           </div>
           <p className="mt-10 -mb-10">

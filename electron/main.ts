@@ -42,9 +42,11 @@ function createWindow() {
   });
 
   // Test active push message to Renderer-process.
-  win.webContents.on("did-finish-load", () => {
-    win?.webContents.send("main-process-message", new Date().toLocaleString());
-  });
+  ipcMain.on("item:add", function (e, item) {
+    win.webContents.on("did-finish-load", () => {
+        win.webContents.send("item:add", item);
+    });
+});
 
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL);
@@ -129,3 +131,5 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
+
+

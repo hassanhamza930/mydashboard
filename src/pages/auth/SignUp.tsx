@@ -122,10 +122,10 @@ export const SignUp = () => {
               Sign Up
             </Button>
 
-            <div className="flex justify-center items-center gap-3 w-full">
-              <div className="w-1/4 bg-darkgray h-[1px] opacity-40" />
+            <div className="text-center flex justify-center items-center gap-3 w-full">
+              <div className="w-10 bg-darkgray h-[1px] opacity-40" />
               <h4>or continue with</h4>
-              <div className="w-1/4 bg-darkgray h-[1px] opacity-40" />
+              <div className="w-10 bg-darkgray h-[1px] opacity-40" />
             </div>
 
             <div className="flex gap-5 py-4">

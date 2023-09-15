@@ -61,7 +61,7 @@ export const Login = () => {
   return (
     <section
       className="
-    bg-bg-color min-h-[100vh] max-h-[100%]  text-darkgray
+    bg-bg-color h-full  text-darkgray
     flex justify-center items-center    
     py-16 px-40 
     "
@@ -123,10 +123,10 @@ export const Login = () => {
               Log in
             </Button>
 
-            <div className="flex justify-center items-center gap-3 w-full">
-              <div className="w-1/4 bg-darkgray h-[1px] opacity-40" />
+            <div className="flex justify-center items-center gap-3 w-full text-center">
+              <div className="w-10 bg-darkgray h-[1px] opacity-40" />
               <h4>or continue with</h4>
-              <div className="w-1/4 bg-darkgray h-[1px] opacity-40" />
+              <div className="w-10 bg-darkgray h-[1px] opacity-40" />
             </div>
 
             <div className="flex gap-5 py-4">
@@ -153,7 +153,7 @@ export const Login = () => {
               />
             </div>
           </form>
-          <p className="mt-10 -mb-10">
+          <p className="mt-10 -mb-10 text-center">
             Don't have an account?{" "}
             <Link
               className="

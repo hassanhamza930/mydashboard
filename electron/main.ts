@@ -44,9 +44,9 @@ function createWindow() {
   // Test active push message to Renderer-process.
   ipcMain.on("item:add", function (e, item) {
     win.webContents.on("did-finish-load", () => {
-        win.webContents.send("item:add", item);
+      win.webContents.send("item:add", item);
     });
-});
+  });
 
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL);
@@ -73,9 +73,7 @@ if (!gotTheLock) {
   app.quit();
 } else {
   app.on("second-instance", (event, commandLine, workingDirectory) => {
-    const oauthToken = commandLine
-      ?.find((e) => e.includes("authuid"))
-      ?.split("=")[1];
+    const uid = commandLine?.find((e) => e.includes("authuid"))?.split("=")[1];
 
     const googleToken = commandLine
       ?.find((e) => e.includes("oauthIdToken"))
@@ -92,10 +90,10 @@ if (!gotTheLock) {
       win.focus();
     }
 
-    if (oauthToken) {
-      console.log("oauthToken", oauthToken);
-      ipcMain.emit("oauthToken", oauthToken);
-      win.webContents.send("oauthToken", oauthToken);
+    if (uid) {
+      console.log("uid", uid);
+      ipcMain.emit("uid", uid);
+      win.webContents.send("uid", uid);
       return;
     }
     if (facebookToken) {
@@ -131,5 +129,3 @@ app.on("window-all-closed", () => {
     app.quit();
   }
 });
-
-

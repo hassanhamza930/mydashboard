@@ -18,37 +18,26 @@ import {
   handleMicrosoftSignIn,
   handleSignUp,
 } from "../../helper/auth";
+import { useIpcRenderer } from "../../hooks/useIpcRederer";
 
 export const SignUp = () => {
-  const navigate = useNavigate();
+  // states
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const ipcRenderer = (window as any).ipcRenderer;
+  const navigate = useNavigate();
+  const ipcRenderer = useIpcRenderer();
 
-  // ipcRenderer.on("oauthIdToken", (event, token) => {
-  //   if (token) {
-  //     SignInWithGoogle(token, navigate);
-  //   }
-  // });
-  // ipcRenderer.on("facebookAuthIdToken", (event, token) => {
-  //   if (token) {
-  //     SignInWithFacebook(token, navigate);
-  //   }
-  // });
   useEffect(() => {
-    ipcRenderer.on("oauthToken", (event, token) => {
-      console.log("oauthToken", token);
+    ipcRenderer.on("uid", (event, token) => {
+      console.log("uid", token);
       if (token) {
-        // console.log("oauthIdToken", token);
-        // SignInWithUid(token, navigate);
-
-        localStorage.setItem("oauthToken", token);
+        localStorage.setItem("uid", token);
         navigate("/dashboard");
       }
     });
-  }, [navigate]);
+  }, [navigate, ipcRenderer]);
 
   return (
     <section
@@ -116,37 +105,37 @@ export const SignUp = () => {
             </div>
 
             <Button
-              onClick={(e) => handleSignUp(e, email, password, name, navigate)}
+              onClick={(e) => handleSignUp(e, name, email, password, navigate)}
               className="max-w-[300px] my-10"
             >
               Sign Up
             </Button>
 
-            <div className="text-center flex justify-center items-center gap-3 w-full">
-              <div className="w-10 bg-darkgray h-[1px] opacity-40" />
+            <div className="flex justify-center items-center gap-3 w-full">
+              <div className="w-1/4 bg-darkgray h-[1px] opacity-40" />
               <h4>or continue with</h4>
-              <div className="w-10 bg-darkgray h-[1px] opacity-40" />
+              <div className="w-1/4 bg-darkgray h-[1px] opacity-40" />
             </div>
 
             <div className="flex gap-5 py-4">
               <img
                 src={googleIcon}
                 className="cursor-pointer"
-                onClick={() => handleGoogleSignIn(ipcRenderer, navigate)}
+                onClick={() => handleGoogleSignIn(ipcRenderer)}
                 width={35}
                 alt="google icon"
               />
               {/* <img
                 src={facebookIcon}
                 className="cursor-pointer"
-                onClick={() => handleFacebookSignIn(ipcRenderer, navigate)}
+                onClick={() => handleFacebookSignIn(ipcRenderer)}
                 width={35}
                 alt="facebook icon"
-              /> */}{" "}
+              /> */}
               <img
                 src={microsoftIcon}
                 className="cursor-pointer"
-                onClick={() => handleMicrosoftSignIn(ipcRenderer, navigate)}
+                onClick={() => handleMicrosoftSignIn(ipcRenderer)}
                 width={35}
                 alt="facebook icon"
               />

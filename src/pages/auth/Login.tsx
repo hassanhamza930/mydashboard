@@ -17,51 +17,30 @@ import {
   handleMicrosoftSignIn,
   // SignInWithMicrosoft,
 } from "../../helper/auth";
+import { useIpcRenderer } from "../../hooks/useIpcRederer";
 
 export const Login = () => {
-  const navigate = useNavigate();
+  // states
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  const ipcRenderer = (window as any).ipcRenderer;
-
-  // ipcRenderer.on("oauthIdToken", (event, token) => {
-  //   if (token) {
-  //     SignInWithGoogle(token, navigate);
-  //   }
-  // });
-  // ipcRenderer.on("facebookAuthIdToken", (event, token) => {
-  //   if (token) {
-  //     console.log(token);
-  //     // Call your signInWithGoogle function with the received token
-  //     SignInWithFacebook(token, navigate);
-  //   }
-  // });
-  // ipcRenderer.on("microsoftAuthIdToken", (event, token) => {
-  //   console.log("microsoftAuthIdToken");
-  //   if (token) {
-  //     // console.log(token);
-  //     SignInWithMicrosoft(token, navigate);
-  //   }
-  // });
+  const navigate = useNavigate();
+  const ipcRenderer = useIpcRenderer();
 
   useEffect(() => {
-    ipcRenderer.on("oauthToken", (event, token) => {
-      console.log("oauthToken", token);
+    ipcRenderer.on("uid", (event, token) => {
+      console.log("uid", token);
       if (token) {
-        // console.log("oauthIdToken", token);
-        // SignInWithUid(token, navigate);
-
-        localStorage.setItem("oauthToken", token);
+        localStorage.setItem("uid", token);
         navigate("/dashboard");
       }
     });
-  }, [navigate]);
+  }, [navigate, ipcRenderer]);
 
   return (
     <section
       className="
-    bg-bg-color h-full  text-darkgray
+    bg-bg-color min-h-[100vh] max-h-[100%]   text-darkgray
     flex justify-center items-center    
     py-16 px-40 
     "
@@ -133,21 +112,21 @@ export const Login = () => {
               <img
                 src={googleIcon}
                 className="cursor-pointer"
-                onClick={() => handleGoogleSignIn(ipcRenderer, navigate)}
+                onClick={() => handleGoogleSignIn(ipcRenderer)}
                 width={35}
                 alt="google icon"
               />
               {/* <img
                 src={facebookIcon}
                 className="cursor-pointer"
-                onClick={() => handleMicrosoftSignIn(ipcRenderer, navigate)}
+                onClick={() => handleMicrosoftSignIn(ipcRenderer)}
                 width={35}
                 alt="facebook icon"
               /> */}
               <img
                 src={microsoftIcon}
                 className="cursor-pointer"
-                onClick={() => handleMicrosoftSignIn(ipcRenderer, navigate)}
+                onClick={() => handleMicrosoftSignIn(ipcRenderer)}
                 width={35}
                 alt="facebook icon"
               />
@@ -163,7 +142,6 @@ export const Login = () => {
             >
               Create free account
             </Link>
-            {/* <button onClick={handleGoogleSignIn}>Open External Webpage</button> */}
           </p>
         </div>
       </div>

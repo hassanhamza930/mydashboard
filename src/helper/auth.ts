@@ -6,12 +6,14 @@ import {
   OAuthProvider,
   createUserWithEmailAndPassword,
   signInWithCredential,
+  signInWithCustomToken,
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
 import { NavigateFunction } from "react-router-dom";
 //
 import { auth } from "../config/firebase";
+import { collection, doc, getFirestore, setDoc } from "firebase/firestore";
 
 /**
  *
@@ -118,7 +120,8 @@ export const handleLogin = async (
     .then((user) => {
       if (user) {
         toast.success("Logged in successfully");
-
+        const { uid } = user.user;
+        localStorage.setItem("oauthToken", uid);
         navigate("/dashboard");
       }
     })
@@ -173,7 +176,7 @@ export function SignInWithFacebook(token: string, navigate: NavigateFunction) {
  * @param token
  * @param navigate
  */
-export async function SignInWithMicrosoft(token, navigate: NavigateFunction) {
+export async function SignInWithMicrosoft(token) {
   try {
     // Create an OAuth provider for Microsoft.
     const provider = new OAuthProvider("microsoft.com");
@@ -188,7 +191,10 @@ export async function SignInWithMicrosoft(token, navigate: NavigateFunction) {
       idToken: token,
     });
 
-    const userCredential = await signInWithCredential(auth, credential);
+    const userCredential = await signInWithCustomToken(
+      auth,
+      credential.accessToken
+    );
     const user = userCredential.user;
 
     // Now, you have signed in the user with Microsoft OAuth.
@@ -230,6 +236,25 @@ export const handleSignUp = async (
         displayName: name,
       });
     }
+
+    const db = getFirestore();
+    const { uid } = userCredential.user;
+    // Use the UID as the name of the document
+    const userDocRef = doc(db, "users", uid);
+
+    // Set data in the document
+    await setDoc(userDocRef, {
+      uid: uid,
+      name: name,
+      email: email,
+    })
+      .then(() => {
+        localStorage.setItem("oauthToken", uid);
+      })
+      .catch((error) => {
+        console.error(error);
+        // toast.error(error.code);
+      });
 
     toast.success("Account created successfully");
     navigate("/dashboard");

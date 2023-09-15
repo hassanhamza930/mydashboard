@@ -1,30 +1,27 @@
 import { Routes, Route, HashRouter } from "react-router-dom";
 import { Home, Layout, Login, SignUp } from "./pages";
 import { useEffect, useState } from "react";
-import { auth } from "./config/firebase";
 import { User } from "firebase/auth";
 import { Navigate } from "react-router-dom";
 
 function App() {
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState(localStorage.getItem("oauthToken"));
 
+  const token = localStorage.getItem("oauthToken");
   useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (user) {
-        setUser(user);
-        console.log("logedin", user);
-      } else {
-        setUser(null);
-      }
-    });
-    // Clean up the observer when the component unmounts
-    return () => unsubscribe();
-  }, []);
+    // const token = localStorage.getItem("oauthToken");
+    console.log("token app useEffect", token);
+    if (token) {
+      setUser(token);
+    } else {
+      setUser(null);
+    }
+  }, [token]);
   return (
     <>
       <HashRouter>
         <Routes>
-          {!user && (
+          {!token && (
             <>
               <Route path="/" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
@@ -33,7 +30,11 @@ function App() {
           <Route element={<Layout />}>
             <Route path="/dashboard" element={<Home />} />
           </Route>
-          <Route path="*" element={<Navigate to="/" />} />
+
+          <Route
+            path="*"
+            element={token ? <Navigate to="/dashboard" /> : <Navigate to="/" />}
+          />
         </Routes>
       </HashRouter>
     </>

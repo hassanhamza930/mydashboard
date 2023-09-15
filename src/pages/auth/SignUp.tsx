@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 //
 import Button from "../../components/ui/Button";
@@ -7,12 +7,15 @@ import Input from "../../components/ui/Input";
 import dashboardScreens from "../../assets/images/signupImg.png";
 import logo from "../../assets/images/logo.png";
 import googleIcon from "../../assets/icons/google.png";
+import microsoftIcon from "../../assets/images/microsoft.png";
+
 // import facebookIcon from "../../assets/icons/facebook.png";
 import {
-  SignInWithFacebook,
-  SignInWithGoogle,
+  // SignInWithFacebook,
+  // SignInWithGoogle,
   // handleFacebookSignIn,
   handleGoogleSignIn,
+  handleMicrosoftSignIn,
   handleSignUp,
 } from "../../helper/auth";
 
@@ -24,16 +27,28 @@ export const SignUp = () => {
 
   const ipcRenderer = (window as any).ipcRenderer;
 
-  ipcRenderer.on("oauthIdToken", (event, token) => {
-    if (token) {
-      SignInWithGoogle(token, navigate);
-    }
-  });
-  ipcRenderer.on("facebookAuthIdToken", (event, token) => {
-    if (token) {
-      SignInWithFacebook(token, navigate);
-    }
-  });
+  // ipcRenderer.on("oauthIdToken", (event, token) => {
+  //   if (token) {
+  //     SignInWithGoogle(token, navigate);
+  //   }
+  // });
+  // ipcRenderer.on("facebookAuthIdToken", (event, token) => {
+  //   if (token) {
+  //     SignInWithFacebook(token, navigate);
+  //   }
+  // });
+  useEffect(() => {
+    ipcRenderer.on("oauthToken", (event, token) => {
+      console.log("oauthToken", token);
+      if (token) {
+        // console.log("oauthIdToken", token);
+        // SignInWithUid(token, navigate);
+
+        localStorage.setItem("oauthToken", token);
+        navigate("/dashboard");
+      }
+    });
+  }, [navigate]);
 
   return (
     <section
@@ -127,7 +142,14 @@ export const SignUp = () => {
                 onClick={() => handleFacebookSignIn(ipcRenderer, navigate)}
                 width={35}
                 alt="facebook icon"
-              /> */}
+              /> */}{" "}
+              <img
+                src={microsoftIcon}
+                className="cursor-pointer"
+                onClick={() => handleMicrosoftSignIn(ipcRenderer, navigate)}
+                width={35}
+                alt="facebook icon"
+              />
             </div>
           </div>
           <p className="mt-10 -mb-10">

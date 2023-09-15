@@ -71,6 +71,10 @@ if (!gotTheLock) {
   app.quit();
 } else {
   app.on("second-instance", (event, commandLine, workingDirectory) => {
+    const oauthToken = commandLine
+      ?.find((e) => e.includes("authuid"))
+      ?.split("=")[1];
+
     const googleToken = commandLine
       ?.find((e) => e.includes("oauthIdToken"))
       ?.split("=")[1];
@@ -81,15 +85,17 @@ if (!gotTheLock) {
       ?.find((e) => e.includes("microsoftIdToken"))
       ?.split("=")[1];
 
-    // console.log("googleToken", googleToken);
-    // console.log("facebookToken", facebookToken);
-    // console.log("microsoftToken", microsoftToken);
-
     if (win) {
       if (win.isMinimized()) win.restore();
       win.focus();
     }
 
+    if (oauthToken) {
+      console.log("oauthToken", oauthToken);
+      ipcMain.emit("oauthToken", oauthToken);
+      win.webContents.send("oauthToken", oauthToken);
+      return;
+    }
     if (facebookToken) {
       console.log("facebookAuthIdToken");
       ipcMain.emit("facebookAuthIdToken", facebookToken);
@@ -117,3 +123,9 @@ if (!gotTheLock) {
   });
 }
 app.whenReady().then(createWindow);
+
+app.on("window-all-closed", () => {
+  if (process.platform !== "darwin") {
+    app.quit();
+  }
+});

@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 //
 import dashboardScreens from "../../assets/images/dashboardScreens.png";
 import logo from "../../assets/images/logo.png";
 import googleIcon from "../../assets/icons/google.png";
-import facebookIcon from "../../assets/icons/facebook.png";
+import microsoftIcon from "../../assets/images/microsoft.png";
 //
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
@@ -12,10 +12,10 @@ import {
   handleGoogleSignIn,
   // handleFacebookSignIn,
   handleLogin,
-  SignInWithGoogle,
-  SignInWithFacebook,
+  // SignInWithGoogle,
+  // SignInWithFacebook,
   handleMicrosoftSignIn,
-  SignInWithMicrosoft,
+  // SignInWithMicrosoft,
 } from "../../helper/auth";
 
 export const Login = () => {
@@ -25,25 +25,38 @@ export const Login = () => {
 
   const ipcRenderer = (window as any).ipcRenderer;
 
-  ipcRenderer.on("oauthIdToken", (event, token) => {
-    if (token) {
-      SignInWithGoogle(token, navigate);
-    }
-  });
-  ipcRenderer.on("facebookAuthIdToken", (event, token) => {
-    if (token) {
-      console.log(token);
-      // Call your signInWithGoogle function with the received token
-      SignInWithFacebook(token, navigate);
-    }
-  });
-  ipcRenderer.on("microsoftAuthIdToken", (event, token) => {
-    console.log("microsoftAuthIdToken");
-    if (token) {
-      // console.log(token);
-      SignInWithMicrosoft(token, navigate);
-    }
-  });
+  // ipcRenderer.on("oauthIdToken", (event, token) => {
+  //   if (token) {
+  //     SignInWithGoogle(token, navigate);
+  //   }
+  // });
+  // ipcRenderer.on("facebookAuthIdToken", (event, token) => {
+  //   if (token) {
+  //     console.log(token);
+  //     // Call your signInWithGoogle function with the received token
+  //     SignInWithFacebook(token, navigate);
+  //   }
+  // });
+  // ipcRenderer.on("microsoftAuthIdToken", (event, token) => {
+  //   console.log("microsoftAuthIdToken");
+  //   if (token) {
+  //     // console.log(token);
+  //     SignInWithMicrosoft(token, navigate);
+  //   }
+  // });
+
+  useEffect(() => {
+    ipcRenderer.on("oauthToken", (event, token) => {
+      console.log("oauthToken", token);
+      if (token) {
+        // console.log("oauthIdToken", token);
+        // SignInWithUid(token, navigate);
+
+        localStorage.setItem("oauthToken", token);
+        navigate("/dashboard");
+      }
+    });
+  }, [navigate]);
 
   return (
     <section
@@ -131,6 +144,13 @@ export const Login = () => {
                 width={35}
                 alt="facebook icon"
               /> */}
+              <img
+                src={microsoftIcon}
+                className="cursor-pointer"
+                onClick={() => handleMicrosoftSignIn(ipcRenderer, navigate)}
+                width={35}
+                alt="facebook icon"
+              />
             </div>
           </form>
           <p className="mt-10 -mb-10">

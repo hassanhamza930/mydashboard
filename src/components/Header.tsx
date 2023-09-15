@@ -7,10 +7,13 @@ import logo from "../assets/images/logo2.png";
 import dummyProfile from "../assets/images/dummyProfile.webp";
 import notification from "../assets/icons/notification.svg";
 import logout from "../assets/icons/logout.svg";
+import useUser from "../hooks/useUser";
 
 const Header = () => {
   const navigate = useNavigate();
   const auth = getAuth();
+  const user = useUser();
+  console.log("user", user);
   return (
     <nav className=" ">
       <div className="nav-wrapper flex justify-between items-center px-10 py-5">
@@ -42,11 +45,11 @@ const Header = () => {
                     border-2
                     border-white
                 "
-              src={dummyProfile}
+              src={user?.photoURL ? user?.photoURL : dummyProfile}
               alt=""
             />
             <div>
-              <h4 className="text-md font-semibold">Spiro Mrda</h4>
+              <h4 className="text-md font-semibold">{user?.name}</h4>
               <h5 className="text-[11px] text-yellow-600 -mt-1">
                 premium user
               </h5>
@@ -63,9 +66,10 @@ const Header = () => {
             src={logout}
             className="cursor-pointer"
             onClick={async () => {
-              navigate("/");
+              localStorage.removeItem("oauthToken");
+              console.log("logout");
               await signOut(auth);
-              await auth.signOut();
+              navigate("/dasboard", {});
             }}
             alt=""
           />

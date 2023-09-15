@@ -61,7 +61,7 @@ export const Login = () => {
   return (
     <section
       className="
-    bg-bg-color h-[100vh] min-h-[100%]  text-darkgray
+    bg-bg-color min-h-[100vh] max-h-[100%]  text-darkgray
     flex justify-center items-center    
     py-16 px-40 
     "

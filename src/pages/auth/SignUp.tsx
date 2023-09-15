@@ -55,7 +55,7 @@ export const SignUp = () => {
       className="
         bg-bg-color  text-darkgray
         flex justify-center items-center    
-        py-16 px-40 h-[100vh] min-h-[100%] 
+        py-16 px-40 min-h-[100vh] max-h-[100%] 
         "
     >
       <div className="flex w-full h-full shadow-md rounded-2xl ">

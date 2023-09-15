@@ -10,7 +10,6 @@ function App() {
   const token = localStorage.getItem("oauthToken");
   useEffect(() => {
     // const token = localStorage.getItem("oauthToken");
-    alert(window.location.href);
     console.log("token app useEffect", token);
     if (token) {
       setUser(token);

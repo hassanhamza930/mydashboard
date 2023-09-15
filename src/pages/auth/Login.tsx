@@ -79,6 +79,7 @@ export const Login = () => {
             "
           >
             Organize your <br /> information
+            {window.location.href}
           </h1>
           <img
             className="w-[400px] mx-auto"

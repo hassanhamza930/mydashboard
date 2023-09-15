@@ -1,8 +1,6 @@
 import { Rnd } from "react-rnd";
 
 const webviewArr: string[] = [
-  "https://github.com",
-  "https://www.baidu.com",
   "https://www.linkedin.com",
   "https://www.google.com",
 ];
@@ -15,7 +13,7 @@ export const Home = () => {
           return (
             <Rnd
               default={{
-                x: 320 * index,
+                x:index*320,
                 y: 0,
                 width: 320,
                 height: 200,

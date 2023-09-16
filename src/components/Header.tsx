@@ -66,8 +66,7 @@ const Header = () => {
             onClick={async () => {
               localStorage.removeItem("uid");
               console.log("logout");
-              await signOut(auth);
-              navigate("/", {});
+              window.location.href="/";
             }}
             alt="logout"
           />

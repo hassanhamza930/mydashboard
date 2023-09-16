@@ -72,6 +72,7 @@ const gotTheLock = app.requestSingleInstanceLock();
 if (!gotTheLock) {
   app.quit();
 } else {
+
   app.on("second-instance", (event, commandLine, workingDirectory) => {
     const uid = commandLine?.find((e) => e.includes("authuid"))?.split("=")[1];
 
@@ -111,10 +112,15 @@ if (!gotTheLock) {
     ipcMain.emit("oauthIdToken", googleToken);
     win.webContents.send("oauthIdToken", googleToken);
   });
+
+
+
   app.on("open-url", (event, url) => {
     console.log("Received custom protocol URL:", url);
-    const token = new URL(url).searchParams.get("oauthIdToken");
+    const token = new URL(url).searchParams.get("authuid");
     console.log("OAuth ID Token:", token);
+    win.webContents.send("oauthIdToken", token);
+
     // ...
   });
 

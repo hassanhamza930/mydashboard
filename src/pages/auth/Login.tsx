@@ -18,14 +18,28 @@ import {
   // SignInWithMicrosoft,
 } from "../../helper/auth";
 import { useIpcRenderer } from "../../hooks/useIpcRederer";
+import { getAuth, sendPasswordResetEmail } from "firebase/auth";
+import { toast } from "react-hot-toast";
 
 export const Login = () => {
   // states
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const auth=getAuth();
 
   const navigate = useNavigate();
   const ipcRenderer = useIpcRenderer();
+
+
+  async function handleForgotPassword(){
+    if(email==""){
+      toast.error("Please enter the email properly")
+    }
+    else{
+      sendPasswordResetEmail(auth,email).then(()=>{toast.success("Password Reset Email Sent")}).catch((err)=>{toast.success(err.message)})
+    }
+  }
+
 
   useEffect(() => {
     ipcRenderer.on("uid", (event, token) => {
@@ -93,6 +107,12 @@ export const Login = () => {
                 type="password"
               />
             </div>
+
+          <div className="flex justify-center items-end w-full">
+            <button onClick={()=>{handleForgotPassword();}} className="text-sm text-blue-500 font-medium -mr-[50%]">Forgot Password?</button>
+
+          </div>
+
 
             <Button
               type="submit"

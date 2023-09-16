@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { IUser } from "../types";
 
-// Assuming you have already initialized Firebase and Firestore
-
-// Custom hook to fetch user data from Firestore by UID
 const useUser = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<IUser | null>(null);
 
   useEffect(() => {
-    const uid = localStorage.getItem("oauthToken");
+    const uid = localStorage.getItem("uid");
 
     if (uid) {
       const db = getFirestore();
@@ -20,19 +18,16 @@ const useUser = () => {
         .then((docSnapshot) => {
           console.log("docSnapshot", docSnapshot);
           if (docSnapshot.exists()) {
-            setUser(docSnapshot.data());
+            setUser(docSnapshot.data() as IUser);
           } else {
-            // Handle the case where the user document does not exist
             setUser(null);
           }
         })
         .catch((error) => {
-          // Handle any errors that occur during the fetch
           console.error("Error fetching user data:", error);
           setUser(null);
         });
     } else {
-      // Handle the case where there is no UID in localStorage
       setUser(null);
     }
   }, []);

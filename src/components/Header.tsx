@@ -13,14 +13,12 @@ const Header = () => {
   const navigate = useNavigate();
   const auth = getAuth();
   const user = useUser();
-  console.log("user", user);
   return (
     <nav className=" ">
       <div className="nav-wrapper flex justify-between items-center px-10 py-5">
         <div className="flex justify-center items-center">
           <img src={logo} width={200} alt="logo" />
-          {/* </div>
-        <div className="search "> */}
+
           <SearchInput
             type="text"
             placeholder="Search MyDashboard"
@@ -66,12 +64,12 @@ const Header = () => {
             src={logout}
             className="cursor-pointer"
             onClick={async () => {
-              localStorage.removeItem("oauthToken");
+              localStorage.removeItem("uid");
               console.log("logout");
               await signOut(auth);
-              navigate("/dasboard", {});
+              navigate("/", {});
             }}
-            alt=""
+            alt="logout"
           />
         </div>
       </div>

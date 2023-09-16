@@ -1,37 +1,25 @@
 import React from "react";
 import toast from "react-hot-toast";
 import {
-  FacebookAuthProvider,
-  GoogleAuthProvider,
-  OAuthProvider,
   createUserWithEmailAndPassword,
-  signInWithCredential,
-  signInWithCustomToken,
   signInWithEmailAndPassword,
   updateProfile,
 } from "firebase/auth";
 import { NavigateFunction } from "react-router-dom";
+import { doc, getFirestore, setDoc } from "firebase/firestore";
 //
 import { auth } from "../config/firebase";
-import { collection, doc, getFirestore, setDoc } from "firebase/firestore";
 
 /**
  *
  * @param ipcRenderer
  * @param navigate
  */
-export const handleGoogleSignIn = (ipcRenderer, navigate) => {
+export const handleGoogleSignIn = (ipcRenderer) => {
   ipcRenderer.send(
     "open-external-browser",
     "https://my-dashboard-chi.vercel.app/auth/firebase/google"
   );
-
-  ipcRenderer.on("token-channel", (event, token) => {
-    if (token) {
-      const credentials = GoogleAuthProvider.credential(token);
-      CredentialSignIn(credentials, navigate);
-    }
-  });
 };
 
 /**
@@ -39,28 +27,11 @@ export const handleGoogleSignIn = (ipcRenderer, navigate) => {
  * @param ipcRenderer
  * @param navigate
  */
-export const handleMicrosoftSignIn = (ipcRenderer, navigate) => {
+export const handleMicrosoftSignIn = (ipcRenderer) => {
   ipcRenderer.send(
     "open-external-browser",
     "https://my-dashboard-chi.vercel.app/auth/firebase/microsoft"
   );
-
-  ipcRenderer.on("token-channel", async (event, token) => {
-    if (token) {
-      try {
-        const provider = new OAuthProvider("microsoft.com");
-        const credentials = provider.credential({
-          idToken: token,
-          // accessToken: token,
-        });
-        await CredentialSignIn(credentials, navigate);
-      } catch (error) {
-        console.error("Error handling Microsoft sign-in:", error);
-      }
-    } else {
-      console.error("Received invalid or missing Microsoft token.");
-    }
-  });
 };
 
 /**
@@ -68,38 +39,12 @@ export const handleMicrosoftSignIn = (ipcRenderer, navigate) => {
  * @param ipcRenderer
  * @param navigate
  */
-export const handleFacebookSignIn = (ipcRenderer, navigate) => {
+export const handleFacebookSignIn = (ipcRenderer) => {
   ipcRenderer.send(
     "open-external-browser",
     "https://my-dashboard-chi.vercel.app/auth/firebase/facebook"
   );
-
-  ipcRenderer.on("token-channel", (event, token) => {
-    if (token) {
-      const credentials = FacebookAuthProvider.credential(token);
-      CredentialSignIn(credentials, navigate);
-    }
-  });
 };
-
-/**
- *
- * @param credentials
- * @param navigate
- */
-export function CredentialSignIn(credentials, navigate) {
-  // //console.log("credentials", credentials);
-  signInWithCredential(auth, credentials)
-    .then(() => {
-      // toast.success("Logged in successfully");
-
-      navigate("/dashboard");
-    })
-    .catch((error) => {
-      //console.log(error);
-      toast.error(error.code);
-    });
-}
 
 /**
  *
@@ -121,7 +66,7 @@ export const handleLogin = async (
       if (user) {
         toast.success("Logged in successfully");
         const { uid } = user.user;
-        localStorage.setItem("oauthToken", uid);
+        localStorage.setItem("uid", uid);
         navigate("/dashboard");
       }
     })
@@ -133,93 +78,17 @@ export const handleLogin = async (
 
 /**
  *
- * @param token
- * @param navigate
- */
-export function SignInWithGoogle(token: string, navigate: NavigateFunction) {
-  const credentials = GoogleAuthProvider.credential(token);
-
-  signInWithCredential(auth, credentials)
-    .then(() => {
-      toast.success("Logged in successfully");
-
-      navigate("/dashboard");
-    })
-    .catch((error) => {
-      //console.log(error);
-      toast.error(error.code);
-    });
-}
-
-/**
- *
- * @param token
- * @param navigate
- */
-export function SignInWithFacebook(token: string, navigate: NavigateFunction) {
-  const credentials = FacebookAuthProvider.credential(token);
-
-  signInWithCredential(auth, credentials)
-    .then(() => {
-      toast.success("Logged in successfully");
-
-      navigate("/dashboard");
-    })
-    .catch((error) => {
-      //console.log(error);
-      toast.error(error.code);
-    });
-}
-
-/**
- *
- * @param token
- * @param navigate
- */
-export async function SignInWithMicrosoft(token) {
-  try {
-    // Create an OAuth provider for Microsoft.
-    const provider = new OAuthProvider("microsoft.com");
-
-    // Set the OAuth ID token directly (without using accessToken).
-    provider.setCustomParameters({
-      id_token: token,
-    });
-
-    // Sign in with the credential.
-    const credential = provider.credential({
-      idToken: token,
-    });
-
-    const userCredential = await signInWithCustomToken(
-      auth,
-      credential.accessToken
-    );
-    const user = userCredential.user;
-
-    // Now, you have signed in the user with Microsoft OAuth.
-    console.log("User signed in:", user);
-
-    return user; // You can return the user object if needed.
-  } catch (error) {
-    console.error("Error signing in with Microsoft OAuth token:", error);
-    throw error;
-  }
-}
-
-/**
- *
  * @param event
+ * @param name
  * @param email
  * @param password
- * @param name
  * @param navigate
  */
 export const handleSignUp = async (
   e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  name: string,
   email: string,
   password: string,
-  name: string,
   navigate: NavigateFunction
 ) => {
   try {
@@ -249,7 +118,7 @@ export const handleSignUp = async (
       email: email,
     })
       .then(() => {
-        localStorage.setItem("oauthToken", uid);
+        localStorage.setItem("uid", uid);
       })
       .catch((error) => {
         console.error(error);

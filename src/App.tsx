@@ -1,39 +1,37 @@
 import { Routes, Route, HashRouter } from "react-router-dom";
-import { Home, Layout, Login, SignUp } from "./pages";
+import { Dashboard, Layout, Login, SignUp } from "./pages";
 import { useEffect, useState } from "react";
-import { User } from "firebase/auth";
 import { Navigate } from "react-router-dom";
 
 function App() {
-  const [user, setUser] = useState(localStorage.getItem("oauthToken"));
+  const [user, setUser] = useState(localStorage.getItem("uid"));
 
-  const token = localStorage.getItem("oauthToken");
   useEffect(() => {
-    // const token = localStorage.getItem("oauthToken");
-    console.log("token app useEffect", token);
-    if (token) {
-      setUser(token);
+    const uid = localStorage.getItem("uid");
+    console.log("uid app useEffect", uid);
+    if (uid) {
+      setUser(uid);
     } else {
       setUser(null);
     }
-  }, [token]);
+  }, []);
   return (
     <>
       <HashRouter>
         <Routes>
-          {!token && (
+          {!user && (
             <>
               <Route path="/" element={<Login />} />
               <Route path="/signup" element={<SignUp />} />
             </>
           )}
           <Route element={<Layout />}>
-            <Route path="/dashboard" element={<Home />} />
+            <Route path="/dashboard" element={<Dashboard />} />
           </Route>
 
           <Route
             path="*"
-            element={token ? <Navigate to="/dashboard" /> : <Navigate to="/" />}
+            element={user ? <Navigate to="/dashboard" /> : <Navigate to="/" />}
           />
         </Routes>
       </HashRouter>

@@ -119,7 +119,8 @@ if (!gotTheLock) {
     console.log("Received custom protocol URL:", url);
     const token = new URL(url).searchParams.get("authuid");
     console.log("OAuth ID Token:", token);
-    win.webContents.send("oauthIdToken", token);
+    win.webContents.send("uid", token);
+    ipcMain.emit("uid", token);
 
     // ...
   });

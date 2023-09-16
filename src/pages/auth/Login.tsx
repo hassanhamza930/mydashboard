@@ -43,7 +43,7 @@ export const Login = () => {
 
   useEffect(() => {
     ipcRenderer.on("uid", (event, token) => {
-      console.log("uid", token);
+      // alert(`${token}`);
       if (token) {
         localStorage.setItem("uid", token);
         navigate("/dashboard");

@@ -4,3 +4,8 @@ export interface IUser {
   photoURL?: string;
   uid: string;
 }
+
+export interface IGroup {
+  name: string;
+  id: string;
+}

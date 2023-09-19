@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./Dialog";
 import Button from "./Button";
 import { firebaseApp } from "../../config/firebase";
 import { IGroup } from "../../types";
+import useUser from "../../hooks/useUser";
 
 interface Props {
   open: boolean;
@@ -15,12 +16,14 @@ interface Props {
 
 const AddNewGroup: React.FC<Props> = ({ open, setOpen }) => {
   const db = getFirestore(firebaseApp);
+  const user = useUser();
   const [name, setName] = React.useState("");
 
   const addNewGroup = async () => {
     const docRef = collection(db, "groups");
 
     await addDoc(docRef, {
+      user: user.uid,
       name: name,
       id: String(Date.now()),
     } as IGroup)
@@ -62,6 +65,23 @@ const AddNewGroup: React.FC<Props> = ({ open, setOpen }) => {
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
+          {/* <input
+            type="file"
+            className="
+                w-full
+                bg-transparent
+                border
+                border-gray-200
+                rounded-xl
+                p-3
+                my-2
+                px-8
+                shadow-sm
+            "
+            placeholder="Group name"
+            // value={name}
+            // onChange={(e) => setName(e.target.value)}
+          /> */}
         </div>
         <div
           className="

@@ -7,5 +7,6 @@ export interface IUser {
 
 export interface IGroup {
   name: string;
+  user: string;
   id: string;
 }

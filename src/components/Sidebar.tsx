@@ -9,6 +9,7 @@ import { firebaseApp } from "../config/firebase";
 import { IGroup } from "../types";
 import useUser from "../hooks/useUser";
 import { fetchGroups } from "../helper/groups";
+import { Link } from "react-router-dom";
 
 const Sidebar = () => {
   // states
@@ -47,7 +48,9 @@ const Sidebar = () => {
       <DividerX />
       <div className="w-full py-3">
         {groups.map((group, index) => (
-          <Group arrow key={group.id + index} name={group.name} />
+          <Link to={`/group/${group.id}`}>
+            <Group arrow key={group.id + index} name={group.name} />
+          </Link>
         ))}
       </div>
       {}

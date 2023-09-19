@@ -37,7 +37,7 @@ export const Group = () => {
           <ArrowLeftIcon
             className="mr-2 -ml-4 text-gray-500 cursor-pointer"
             size={20}
-            onClick={() => navigate(-1)}
+            onClick={() => navigate("/dashboard")}
           />
           <span className="text-2xl font-semibold ">
             {group?.name.toUpperCase()}

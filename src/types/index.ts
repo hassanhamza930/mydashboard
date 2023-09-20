@@ -9,4 +9,5 @@ export interface IGroup {
   name: string;
   user: string;
   id: string;
+  icon?: string;
 }

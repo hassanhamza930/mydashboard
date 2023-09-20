@@ -3,13 +3,12 @@ import { useEffect, useState } from "react";
 import AddNewButton from "./ui/AddNewButton";
 import Group from "./ui/Group";
 import DividerX from "./ui/DividerX";
-import AddNewGroup from "./ui/AddNewGroup";
+import AddNewGroup from "./modals/AddNewGroup";
 import { getFirestore } from "firebase/firestore";
 import { firebaseApp } from "../config/firebase";
 import { IGroup } from "../types";
 import useUser from "../hooks/useUser";
 import { fetchGroups } from "../helper/groups";
-import { Link } from "react-router-dom";
 
 const Sidebar = () => {
   // states
@@ -40,7 +39,7 @@ const Sidebar = () => {
       "
     >
       <div className="relative w-full mb-5">
-        <AddNewButton className="" onClick={handleClick}>
+        <AddNewButton className="text-md" onClick={handleClick}>
           Add Group
         </AddNewButton>
       </div>
@@ -48,9 +47,7 @@ const Sidebar = () => {
       <DividerX />
       <div className="w-full py-3">
         {groups.map((group, index) => (
-          <Link to={`/group/${group.id}`}>
-            <Group arrow key={group.id + index} name={group.name} />
-          </Link>
+          <Group key={group.id + index} arrow group={group} />
         ))}
       </div>
       {}

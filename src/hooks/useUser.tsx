@@ -16,7 +16,6 @@ const useUser = () => {
       // Fetch user data from Firestore
       getDoc(userDocRef)
         .then((docSnapshot) => {
-          console.log("docSnapshot", docSnapshot);
           if (docSnapshot.exists()) {
             setUser(docSnapshot.data() as IUser);
           } else {

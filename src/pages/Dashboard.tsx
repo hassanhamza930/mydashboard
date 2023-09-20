@@ -1,16 +1,11 @@
-// const webviewArr: string[] = [
-//   "https://www.linkedin.com",
-//   "https://www.google.com",
-// ];
-
 import { useEffect, useState } from "react";
+import { getFirestore } from "firebase/firestore";
+//
 import { fetchGroups } from "../helper/groups";
 import useUser from "../hooks/useUser";
-import { getFirestore } from "firebase/firestore";
 import { firebaseApp } from "../config/firebase";
 import { IGroup } from "../types";
 import Group from "../components/ui/Group";
-import { Link } from "react-router-dom";
 
 export const Dashboard = () => {
   // states
@@ -40,15 +35,16 @@ export const Dashboard = () => {
         <div
           className="
           grid
-          grid-cols-4
+          xl:grid-cols-4
+          md:grid-cols-3
+          sm:grid-cols-2
+          grid-cols-1
           gap-5
           w-full
         "
         >
           {groups.map((group, index) => (
-            <Link to={`/group/${group.id}`}>
-              <Group key={group.id + index} name={group.name} />
-            </Link>
+            <Group key={group.id + index} options group={group} />
           ))}
         </div>
       </div>

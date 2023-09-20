@@ -1,4 +1,10 @@
-import { collection, getDocs, query, where } from "firebase/firestore";
+import {
+  collection,
+  getDocs,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
 import { IGroup } from "../types";
 
 /**
@@ -8,21 +14,20 @@ import { IGroup } from "../types";
  * @param setGroups
  */
 export const fetchGroups = async (db, user, setGroups) => {
-  const groupsQuery = query(
-    collection(db, "groups"),
-    where("user", "==", user.uid)
-  );
+  const groupsCollection = collection(db, "groups");
 
-  const snapshot = await getDocs(groupsQuery);
-  const groupArr = snapshot.docs.map((doc) => doc.data() as IGroup);
+  const groupsQuery = query(groupsCollection, where("user", "==", user?.uid));
 
-  setGroups(groupArr);
+  onSnapshot(groupsQuery, (querySnapshot) => {
+    const groupArr = querySnapshot.docs.map((doc) => doc.data() as IGroup);
+    setGroups(groupArr);
+  });
 };
 
 export const fetchGroupsWithId = async (db, user, setGroups, id) => {
   const groupsQuery = query(
     collection(db, "groups"),
-    where("user", "==", user.uid),
+    where("user", "==", user?.uid),
     where("id", "==", id)
   );
 

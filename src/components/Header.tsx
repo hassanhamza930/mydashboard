@@ -1,5 +1,3 @@
-import { getAuth, signOut } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
 //
 import SearchInput from "./ui/SearchInput";
 //
@@ -10,8 +8,6 @@ import logout from "../assets/icons/logout.svg";
 import useUser from "../hooks/useUser";
 
 const Header = () => {
-  const navigate = useNavigate();
-  const auth = getAuth();
   const user = useUser();
   return (
     <nav className=" ">
@@ -66,7 +62,7 @@ const Header = () => {
             onClick={async () => {
               localStorage.removeItem("uid");
               console.log("logout");
-              window.location.href="/";
+              window.location.href = "/";
             }}
             alt="logout"
           />

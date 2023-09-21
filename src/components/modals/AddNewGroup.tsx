@@ -52,7 +52,7 @@ const AddNewGroup: React.FC<Props> = ({ open, setOpen }) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="bg-white">
+      <DialogContent className="bg-black">
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-left">
             New group

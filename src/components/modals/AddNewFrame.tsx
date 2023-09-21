@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { doc, getFirestore, setDoc } from "firebase/firestore";
 import { v4 as uuid } from "uuid";
+import validator from "validator";
 //
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./Dialog";
 import Button from "../ui/Button";
@@ -19,9 +20,21 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
   const db = getFirestore(firebaseApp);
   const user = useUser();
   const [link, setLink] = useState("");
+  const [errorMessages, setErrorMessages] = useState<string>();
 
   // handlers
   const addNewFrame = async () => {
+    if (link === "") {
+      setErrorMessages("Link is required");
+      return;
+    }
+    if (
+      validator.isURL(link) === false ||
+      link.startsWith("https://") === false
+    ) {
+      setErrorMessages("Link is not valid url format eg: https://example.com");
+      return;
+    }
     const id = uuid();
     const docRef = doc(db, "frames", id);
 
@@ -43,6 +56,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
       .catch((err) => {
         toast.error(err.message);
       });
+    setOpen(false);
   };
 
   return (
@@ -59,8 +73,14 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
             className="w-full bg-transparent border border-gray-200 rounded-xl p-3 my-2 px-8 shadow-sm"
             placeholder="Frame link"
             value={link}
-            onChange={(e) => setLink(e.target.value)}
+            onChange={(e) => {
+              setErrorMessages("");
+              setLink(e.target.value);
+            }}
           />
+          {errorMessages && (
+            <p className="text-red-500 text-xs">{errorMessages}</p>
+          )}
         </div>
         <div className="flex justify-between items-center gap-3">
           <Button
@@ -74,7 +94,6 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
           <Button
             onClick={async () => {
               await addNewFrame();
-              setOpen(false);
             }}
           >
             <span className="text-white">Create</span>

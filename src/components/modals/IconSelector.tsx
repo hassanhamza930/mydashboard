@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 //
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./Dialog";
 import * as Icons from "react-icons/fa";
@@ -11,6 +11,27 @@ interface Props {
 }
 
 const IconSelector: React.FC<Props> = ({ open, setOpen, setSelectedIcon }) => {
+  // state
+  const [search, setSearch] = useState("");
+  const [iconArray, setIconArray] = useState<string[]>([]);
+
+  // handlers
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (search === "") return setIconArray(Object.keys(Icons).slice(1, 400));
+      const filteredIcons = Object.keys(Icons).filter((icon) => {
+        return icon.toLowerCase().includes(search.toLowerCase());
+      });
+      setIconArray(filteredIcons);
+    }, 500);
+    return () => clearTimeout(timeout);
+  }, [search]);
+
+  useEffect(() => {
+    const iconArray = Object.keys(Icons).slice(1, 400);
+    setIconArray(iconArray);
+  }, [search]);
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent
@@ -24,11 +45,28 @@ const IconSelector: React.FC<Props> = ({ open, setOpen, setSelectedIcon }) => {
           </DialogTitle>
         </DialogHeader>
 
+        <input
+          type="text"
+          className="
+                w-full
+                p-3
+                rounded-xl
+                outline-none
+                border
+                border-gray-200
+                focus:border-blue-500
+                focus:ring-0
+                "
+          placeholder="Search for icons"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+
         <div
           className="
                 flex
                 justiify-center
-                items-center
+                items-start
                 gap-3
                 flex-wrap
                 overflow-y-auto
@@ -36,14 +74,12 @@ const IconSelector: React.FC<Props> = ({ open, setOpen, setSelectedIcon }) => {
 
             "
         >
-          {Object.keys(Icons)
-            .slice(1, 400)
-            .map((icon, index) => {
-              const Icon = Icons[icon];
-              return (
-                <div
-                  key={index}
-                  className="
+          {iconArray.map((icon, index) => {
+            const Icon = Icons[icon];
+            return (
+              <div
+                key={index}
+                className="
                                grid
                                 place-items-center
                                 p-3
@@ -57,15 +93,15 @@ const IconSelector: React.FC<Props> = ({ open, setOpen, setSelectedIcon }) => {
                                 hover:bg-gray-100
 
                                 "
-                  onClick={() => {
-                    setSelectedIcon(icon);
-                    setOpen(false);
-                  }}
-                >
-                  <Icon className="text-4xl" />
-                </div>
-              );
-            })}
+                onClick={() => {
+                  setSelectedIcon(icon);
+                  setOpen(false);
+                }}
+              >
+                <Icon className="text-4xl" />
+              </div>
+            );
+          })}
         </div>
       </DialogContent>
     </Dialog>

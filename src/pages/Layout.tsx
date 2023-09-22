@@ -9,7 +9,7 @@ export const Layout = () => {
       <div className="flex max-h-full min-h-[100vh]">
         <Sidebar />
 
-        <div className="relative bg-white  w-full rounded-xl p-10 py-6 shadow-md">
+        <div className="relative overflow-auto bg-white  w-full rounded-xl p-10 py-6 shadow-md">
           {/* Dashboard */}
           <Outlet />
           {/* Dashboard */}

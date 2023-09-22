@@ -106,17 +106,46 @@ export const Group = () => {
       "
         >
           {frames.map((frame: any) => (
-            <div key={frame.id} style={{ resize: "both", overflow: "auto" }}>
+            <div
+              className="
+              p-1
+              rounded-xl
+              shadow-sm
+              bg-slate-200
+              relative
+              pt-8
+              "
+              key={frame.id}
+              style={{
+                width: frame.width,
+                height: frame.height,
+                resize: "both",
+                overflow: "auto",
+              }}
+            >
+              <p
+                className="
+              absolute
+              top-1
+              text-sm
+              font-medium
+              text-gray-600
+              my-1
+              mx-3
+              "
+              >
+                {frame.name}
+              </p>
               <webview
                 src={frame.link}
                 className="
-            h-full
-            w-full
-            resize-both
-            overflow-auto
-            rounded-xl
-            shadow-md
-          "
+                  h-full
+                  w-full
+                  resize-both
+                  overflow-auto
+                  rounded-xl
+                  shadow-md
+                "
               />
             </div>
           ))}

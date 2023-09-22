@@ -3,11 +3,12 @@ import { IGroup } from "../../types";
 import { ArrowDown } from "lucide-react";
 import * as FaIcon from "react-icons/fa";
 import { BiDotsVerticalRounded } from "react-icons/bi";
-import DividerX from "./DividerX";
 import { Link } from "react-router-dom";
 import UpdateGroup from "../modals/UpdateGroup";
 import { deleteDoc, doc, getFirestore } from "firebase/firestore";
 import { firebaseApp } from "../../config/firebase";
+import GroupMenu from "../DropDowns/GroupMenu";
+import toast from "react-hot-toast";
 
 interface IGroupPorps {
   opened?: boolean;
@@ -33,9 +34,11 @@ const Group: React.FC<IGroupPorps> = ({
 
     try {
       await deleteDoc(groupDocRef);
+      toast.success("Group deleted successfully");
       console.log("Group deleted successfully");
     } catch (error) {
-      console.error("Error deleting group:", error.message);
+      console.error("Error deleting group:", error.code);
+      toast.error(error.code);
       // Handle error, e.g., show an error message to the user
     }
   };
@@ -66,13 +69,15 @@ const Group: React.FC<IGroupPorps> = ({
         <Link to={`/group/${group.id}`} className="flex">
           <span>{group?.icon && <Icon size={20} className="mr-2" />}</span>
           <span
-            className="
+            className={
+              `
           whitespace-nowrap
           overflow-hidden
           overflow-ellipsis
           px-2
-          w-[70%]
-        "
+          w-full
+        ` + (arrow ? "w-[60%]" : "")
+            }
           >
             {group.name}
           </span>
@@ -110,53 +115,18 @@ const Group: React.FC<IGroupPorps> = ({
       {open && (
         <div
           className="
-            absolute
-            top-8
-            right-0
-            bg-white
-            rounded-xl
-            my-2
-            flex
-            gap-2
-            items-left
-            flex-col
-            shadow-lg
-            cursor-pointer
-            text-gray-500
-            border
-            border-gray-200
-            z-10
-            "
+        absolute
+        top-10
+        right-0
+        bg-white
+        "
         >
-          <p
-            className="
-              hover:bg-gray-200
-              p-2
-              px-6
-
-            "
-            onClick={() => {
-              setIsUpdateGroupOpen(true);
-              setOpen(false);
-            }}
-          >
-            Edit
-          </p>
-          <DividerX />
-          <p
-            className="
-              hover:bg-gray-200
-              p-2
-              px-6
-              mb-2
-            "
-            onClick={async () => {
-              await deleteGroup();
-              setOpen(false);
-            }}
-          >
-            Delete
-          </p>
+          <GroupMenu
+            open={open}
+            setOpen={setOpen}
+            deleteGroup={deleteGroup}
+            setIsUpdateGroupOpen={setIsUpdateGroupOpen}
+          />
         </div>
       )}
       <UpdateGroup

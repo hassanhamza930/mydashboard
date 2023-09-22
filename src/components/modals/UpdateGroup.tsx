@@ -32,7 +32,7 @@ const UpdateGroup: React.FC<Props> = ({ open, setOpen, group }) => {
         toast.success("group updated");
       })
       .catch((err) => {
-        toast.error(err.message);
+        toast.error(err.code);
       });
   };
 
@@ -83,7 +83,7 @@ const UpdateGroup: React.FC<Props> = ({ open, setOpen, group }) => {
               setOpen(false);
             }}
           >
-            <span className="text-white">Create</span>
+            <span className="text-white">update</span>
           </Button>
         </div>
       </DialogContent>

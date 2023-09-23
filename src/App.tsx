@@ -1,7 +1,8 @@
 import { Routes, Route, HashRouter } from "react-router-dom";
-import { Dashboard, Layout, Login, SignUp } from "./pages";
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
+//
+import { Dashboard, Group, Layout, Login, SignUp } from "./pages";
 
 function App() {
   const [user, setUser] = useState(localStorage.getItem("uid"));
@@ -27,6 +28,7 @@ function App() {
           )}
           <Route element={<Layout />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/group/:id" element={<Group />} />
           </Route>
 
           <Route

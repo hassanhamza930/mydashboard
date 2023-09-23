@@ -4,3 +4,10 @@ export interface IUser {
   photoURL?: string;
   uid: string;
 }
+
+export interface IGroup {
+  name: string;
+  user: string;
+  id: string;
+  icon?: string;
+}

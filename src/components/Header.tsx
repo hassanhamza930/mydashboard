@@ -1,17 +1,13 @@
-import { getAuth, signOut } from "firebase/auth";
-import { useNavigate } from "react-router-dom";
 //
-import SearchInput from "./ui/SearchInput";
+// import SearchInput from "./ui/SearchInput";
 //
 import logo from "../assets/images/logo2.png";
 import dummyProfile from "../assets/images/dummyProfile.webp";
-import notification from "../assets/icons/notification.svg";
+// import notification from "../assets/icons/notification.svg";
 import logout from "../assets/icons/logout.svg";
 import useUser from "../hooks/useUser";
 
 const Header = () => {
-  const navigate = useNavigate();
-  const auth = getAuth();
   const user = useUser();
   return (
     <nav className=" ">
@@ -19,7 +15,7 @@ const Header = () => {
         <div className="flex justify-center items-center">
           <img src={logo} width={200} alt="logo" />
 
-          <SearchInput
+          {/* <SearchInput
             type="text"
             placeholder="Search MyDashboard"
             className="
@@ -28,7 +24,7 @@ const Header = () => {
             hidden
             lg:flex
             "
-          />
+          /> */}
         </div>
         <div className="flex gap-x-5 justify-center items-center">
           <div className="flex gap-x-2 justify-center items-center">
@@ -54,19 +50,19 @@ const Header = () => {
             </div>
           </div>
 
-          <img
+          {/* <img
             src={notification}
             className="cursor-pointer"
             onClick={() => {}}
             alt=""
-          />
+          /> */}
           <img
             src={logout}
             className="cursor-pointer"
             onClick={async () => {
               localStorage.removeItem("uid");
               console.log("logout");
-              window.location.href="/";
+              window.location.href = "/";
             }}
             alt="logout"
           />

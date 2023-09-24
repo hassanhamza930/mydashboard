@@ -4,13 +4,23 @@ module.exports = {
   },
   rebuildConfig: {},
   makers: [
+    // {
+    //   name: '@electron-forge/maker-dmg',
+    //   config: {
+    //     background: './assets/dmg-background.png',
+    //     format: 'ULFO'
+    //   }
+    // },
     {
       name: '@electron-forge/maker-squirrel',
       config: {},
     },
     {
-      name: '@electron-forge/maker-zip',
+      name: '@electron-forge/maker-dmg',
       platforms: ['darwin'],
+      config: {
+        name: 'the-dashboard'
+      }
     },
     {
       name: '@electron-forge/maker-deb',

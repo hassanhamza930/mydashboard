@@ -15,11 +15,18 @@ module.exports = {
       name: '@electron-forge/maker-squirrel',
       config: {},
     },
+    // {
+    //   name: '@electron-forge/maker-dmg',
+    //   platforms: ['darwin'],
+    //   config: {
+    //     name: 'the-dashboard'
+    //   }
+    // },
     {
-      name: '@electron-forge/maker-dmg',
+      name: '@electron-forge/maker-pkg',
       platforms: ['darwin'],
       config: {
-        name: 'the-dashboard'
+        // Configuration for macOS .pkg installer
       }
     },
     {

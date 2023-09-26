@@ -23,7 +23,7 @@ module.exports = {
     //   }
     // },
     {
-      name: '@electron-forge/maker-pkg',
+      name: '@electron-forge/maker-zip',
       platforms: ['darwin'],
       config: {
         // Configuration for macOS .pkg installer

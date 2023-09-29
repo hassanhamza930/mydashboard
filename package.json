@@ -6,7 +6,7 @@
   "author": "MyDashboard",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build && electron-builder --mac",
+    "build": "tsc && vite build && electron-builder",
     "buildWindows": "tsc && vite build && electron-builder",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",

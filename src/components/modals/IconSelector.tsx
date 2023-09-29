@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 //
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./Dialog";
-import * as Icons from "react-icons/fa";
+// import * as Icons from "react-icons/fa";
+import * as LucidIcon from "lucide-react";
+
 interface Props {
   open: boolean;
   // eslint-disable-next-line no-unused-vars
@@ -18,8 +20,9 @@ const IconSelector: React.FC<Props> = ({ open, setOpen, setSelectedIcon }) => {
   // handlers
   useEffect(() => {
     const timeout = setTimeout(() => {
-      if (search === "") return setIconArray(Object.keys(Icons).slice(1, 400));
-      const filteredIcons = Object.keys(Icons).filter((icon) => {
+      if (search === "")
+        return setIconArray(Object.keys(LucidIcon).slice(1, 400));
+      const filteredIcons = Object.keys(LucidIcon).filter((icon) => {
         return icon.toLowerCase().includes(search.toLowerCase());
       });
       setIconArray(filteredIcons);
@@ -28,7 +31,7 @@ const IconSelector: React.FC<Props> = ({ open, setOpen, setSelectedIcon }) => {
   }, [search]);
 
   useEffect(() => {
-    const iconArray = Object.keys(Icons).slice(1, 400);
+    const iconArray = Object.keys(LucidIcon).slice(1, 400);
     setIconArray(iconArray);
   }, [search]);
 
@@ -75,7 +78,7 @@ const IconSelector: React.FC<Props> = ({ open, setOpen, setSelectedIcon }) => {
             "
         >
           {iconArray.map((icon, index) => {
-            const Icon = Icons[icon];
+            const Icon = LucidIcon[icon];
             return (
               <div
                 key={index}

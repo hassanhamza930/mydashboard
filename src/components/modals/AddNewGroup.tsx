@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { doc, getFirestore, setDoc } from "firebase/firestore";
-import * as FaIcon from "react-icons/fa";
+import * as lucidIcon from "lucide-react";
 import { v4 as uuid } from "uuid";
 //
 import IconSelector from "./IconSelector";
@@ -21,9 +21,11 @@ const AddNewGroup: React.FC<Props> = ({ open, setOpen }) => {
   const db = getFirestore(firebaseApp);
   const user = useUser();
   const [name, setName] = useState("");
-  const [selectedIcon, setSelectedIcon] = useState<string>(FaIcon.FaUser.name);
+  const [selectedIcon, setSelectedIcon] = useState<string>("AccessibilityIcon");
   const [isIconSelectorOpen, setIsIconSelectorOpen] = useState(false);
-  const IconSelected = FaIcon[selectedIcon];
+
+  const IconSelected = lucidIcon[selectedIcon];
+  // console.log(Object.keys(lucidIcon), "lucidIcon");
 
   // handlers
   const addNewGroup = async () => {

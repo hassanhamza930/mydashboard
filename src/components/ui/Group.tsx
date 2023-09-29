@@ -1,7 +1,7 @@
 import React from "react";
 import { IGroup } from "../../types";
 import { ArrowDown } from "lucide-react";
-import * as FaIcon from "react-icons/fa";
+import * as FaIcon from "lucide-react";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import UpdateGroup from "../modals/UpdateGroup";
@@ -67,7 +67,9 @@ const Group: React.FC<IGroupPorps> = ({
         "
       >
         <Link to={`/group/${group.id}`} className="flex">
-          <span>{group?.icon && <Icon size={20} className="mr-2" />}</span>
+          <span>
+            {(group?.icon && <Icon size={20} className="mr-2" />) ?? null}
+          </span>
           <span
             className={
               `

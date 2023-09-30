@@ -1,6 +1,6 @@
 import React from "react";
 import { IGroup } from "../../types";
-import { ArrowDown } from "lucide-react";
+// import { ArrowDown } from "lucide-react";
 import * as FaIcon from "lucide-react";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { Link } from "react-router-dom";
@@ -44,18 +44,18 @@ const Group: React.FC<IGroupPorps> = ({
   };
 
   return (
-    <div className="relative">
+    <div className="relative w-full ">
       <div
         className="
         w-full
         bg-white
         rounded-xl
-        p-3
+   
         my-2
-        px-6
+
         flex
         items-center
-        justify-between
+        
         shadow-md
         cursor-pointer
         text-gray-500
@@ -66,7 +66,7 @@ const Group: React.FC<IGroupPorps> = ({
 
         "
       >
-        <Link to={`/group/${group.id}`} className="flex">
+        <Link to={`/group/${group.id}`} className="flex w-full p-3 mr-2">
           <span>
             {(group?.icon && <Icon size={20} className="mr-2" />) ?? null}
           </span>
@@ -84,7 +84,7 @@ const Group: React.FC<IGroupPorps> = ({
             {group.name}
           </span>
         </Link>
-        {arrow && (
+        {/* {arrow && (
           <span>
             <ArrowDown
               size={14}
@@ -98,11 +98,11 @@ const Group: React.FC<IGroupPorps> = ({
               }
             />
           </span>
-        )}
+        )} */}
         {options && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 mr-2">
             <BiDotsVerticalRounded
-              size={14}
+              size={18}
               className="text-gray-400 group-hover:text-gray-600"
               onClick={() =>
                 setOpen((prev) => {

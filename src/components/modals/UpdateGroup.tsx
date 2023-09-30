@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { doc, getFirestore, updateDoc } from "firebase/firestore";
-import * as FaIcon from "react-icons/fa";
+import * as FaIcon from "lucide-react";
 import IconSelector from "./IconSelector";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./Dialog";
 import Button from "../ui/Button";

@@ -1,34 +1,39 @@
 import { useEffect, useState } from "react";
-import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { getFirestore, doc, onSnapshot } from "firebase/firestore";
 import { IUser } from "../types";
 
 const useUser = () => {
   const [user, setUser] = useState<IUser | null>(null);
 
   useEffect(() => {
-    const uid = localStorage.getItem("uid");
+    const auth = getAuth();
+    const db = getFirestore();
 
-    if (uid) {
-      const db = getFirestore();
+    const unsubscribeAuth = onAuthStateChanged(auth, (authUser) => {
+      if (authUser) {
+        const uid = authUser.uid;
+        const userDocRef = doc(db, "users", uid);
 
-      const userDocRef = doc(db, "users", uid);
-
-      // Fetch user data from Firestore
-      getDoc(userDocRef)
-        .then((docSnapshot) => {
+        const unsubscribeSnapshot = onSnapshot(userDocRef, (docSnapshot) => {
           if (docSnapshot.exists()) {
             setUser(docSnapshot.data() as IUser);
           } else {
             setUser(null);
           }
-        })
-        .catch((error) => {
-          console.error("Error fetching user data:", error);
-          setUser(null);
         });
-    } else {
-      setUser(null);
-    }
+
+        return () => {
+          unsubscribeSnapshot();
+        };
+      } else {
+        setUser(null);
+      }
+    });
+
+    return () => {
+      unsubscribeAuth();
+    };
   }, []);
 
   return user;

@@ -6,6 +6,7 @@ import dummyProfile from "../assets/images/dummyProfile.webp";
 // import notification from "../assets/icons/notification.svg";
 import logout from "../assets/icons/logout.svg";
 import useUser from "../hooks/useUser";
+import { auth } from "../config/firebase";
 
 const Header = () => {
   const user = useUser();
@@ -14,7 +15,6 @@ const Header = () => {
       <div className="nav-wrapper flex justify-between items-center px-10 py-5">
         <div className="flex justify-center items-center">
           <img src={logo} width={200} alt="logo" />
-
           {/* <SearchInput
             type="text"
             placeholder="Search MyDashboard"
@@ -61,9 +61,9 @@ const Header = () => {
             className="cursor-pointer"
             onClick={async () => {
               localStorage.removeItem("uid");
-              console.log("logout");
+              auth.signOut();
               window.location.reload();
-              // window.location.href = "/";
+              window.location.href = "/";
             }}
             alt="logout"
           />

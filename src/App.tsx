@@ -3,19 +3,32 @@ import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 //
 import { Dashboard, Group, Layout, Login, SignUp } from "./pages";
+import { getAuth, onAuthStateChanged } from "@firebase/auth";
+import { IUser } from "./types";
 
 function App() {
-  const [user, setUser] = useState(localStorage.getItem("uid"));
+  const [user, setUser] = useState<IUser>();
+  const [loading, setLoading] = useState(true);
+  const auth = getAuth();
 
   useEffect(() => {
-    const uid = localStorage.getItem("uid");
-    console.log("uid app useEffect", uid);
-    if (uid) {
-      setUser(uid);
-    } else {
-      setUser(null);
-    }
-  }, []);
+    const unsubscribeAuth = onAuthStateChanged(auth, (authUser: any) => {
+      if (authUser) {
+        setUser(authUser);
+        setLoading(false);
+      } else {
+        setUser(null);
+        setLoading(false);
+      }
+    });
+    return () => {
+      unsubscribeAuth();
+    };
+  }, [auth]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
   return (
     <>
       <HashRouter>
@@ -27,6 +40,7 @@ function App() {
             </>
           )}
           <Route element={<Layout />}>
+            <Route path="/" element={<Dashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/group/:id" element={<Group />} />
           </Route>

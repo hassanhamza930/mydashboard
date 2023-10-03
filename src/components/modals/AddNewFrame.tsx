@@ -39,10 +39,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
       setErrorMessages("Link is required");
       return;
     }
-    if (
-      validator.isURL(link) === false ||
-      link.startsWith("https://") === false
-    ) {
+    if (validator.isURL(link) === false) {
       setErrorMessages("Link is not valid url format eg: https://example.com");
       return;
     }
@@ -99,21 +96,23 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                 className="bg-transparent border border-gray-200 rounded-xl p-3  px-8 shadow-sm"
                 onClick={(e) => {
                   e.preventDefault();
+
                   setErrorMessages("");
                   if (link === "") {
                     setErrorMessages("Link is required");
                     return;
                   }
-                  if (
-                    validator.isURL(link) === false ||
-                    link.startsWith("https://") === false
-                  ) {
+                  if (validator.isURL(link) === false) {
                     setErrorMessages(
                       "Link is not valid url format eg: https://example.com"
                     );
                     return;
                   }
-                  setFrame(link);
+                  if (link.startsWith("https://") === false) {
+                    setFrame(`https://${link}`);
+                  } else {
+                    setFrame(link);
+                  }
                 }}
               >
                 <FaSearch className="text-gray-400" />

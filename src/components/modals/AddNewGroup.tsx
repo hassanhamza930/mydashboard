@@ -25,7 +25,6 @@ const AddNewGroup: React.FC<Props> = ({ open, setOpen }) => {
   const [isIconSelectorOpen, setIsIconSelectorOpen] = useState(false);
 
   const IconSelected = lucidIcon[selectedIcon];
-  // console.log(Object.keys(lucidIcon), "lucidIcon");
 
   // handlers
   const addNewGroup = async () => {

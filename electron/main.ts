@@ -81,7 +81,6 @@ if (!gotTheLock) {
     }
 
     if (uid) {
-      console.log("uid", uid);
       ipcMain.emit("uid", uid);
       win.webContents.send("uid", uid);
       return;
@@ -97,7 +96,6 @@ app.on("open-url", (event, url) => {
   }
 
   if (uid) {
-    console.log("uid", uid);
     ipcMain.emit("uid", uid);
     win.webContents.send("uid", uid);
     return;

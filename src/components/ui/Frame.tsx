@@ -1,20 +1,76 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { IFrame } from "../../types";
-import { doc, getFirestore, updateDoc } from "firebase/firestore";
+import { deleteDoc, doc, getFirestore, updateDoc } from "firebase/firestore";
+import FrameMenu from "../DropDowns/FrameMenu";
+import toast from "react-hot-toast";
+import UpdateFrame from "../modals/UpdateFrame";
 
 interface Props {
   frame: IFrame;
 }
 
 const Frame: React.FC<Props> = ({ frame }) => {
-  const width = frame?.width;
-  const height = frame?.height;
+  const [open, setOpen] = useState(false);
+  const [updateFrameOpen, setUpdateFrameOpen] = useState(false);
   const resizeDiv = useRef<HTMLDivElement | null>(null);
+  const db = getFirestore();
+
+  const deleteFrame = async () => {
+    try {
+      await deleteDoc(doc(db, "frames", frame.id));
+      toast.success("Frame deleted successfully");
+      console.log("Frame deleted successfully");
+    } catch (error) {
+      console.error("Error deleting Frame:", error.code);
+      toast.error(error.code);
+    }
+  };
+
+  // eslint-disable-next-line
+  const handleWebViewAction = (action: (webView: any) => void) => {
+    const webView = document.getElementById("webview-frame-main") as any;
+    if (webView) {
+      webView.addEventListener("dom-ready", () => {
+        action(webView);
+      });
+    }
+  };
+
+  const setZoomFactor = (zoomFactor: number) => {
+    handleWebViewAction((webView) => {
+      // @ts-ignore
+      webView.setZoomFactor(zoomFactor);
+    });
+  };
+
+  const handleXScroll = () => {
+    handleWebViewAction((webView) => {
+      // @ts-ignore
+      webView.executeJavaScript(`window.scrollTo(${frame.xPosition * 100}, 0)`);
+    });
+  };
+
+  const handleYScroll = () => {
+    handleWebViewAction((webView) => {
+      // @ts-ignore
+      webView.executeJavaScript(`window.scrollTo(0, ${frame.yPosition * 100})`);
+    });
+  };
 
   useEffect(() => {
-    const db = getFirestore();
+    if (frame.zoom) {
+      setZoomFactor(frame.zoom);
+    }
+    if (frame.xPosition) {
+      handleXScroll();
+    }
+    if (frame.yPosition) {
+      handleYScroll();
+    }
+  }, [frame]);
 
+  useEffect(() => {
     const updateFrame = async () => {
       const docRef = doc(db, "frames", frame.id);
 
@@ -24,18 +80,17 @@ const Frame: React.FC<Props> = ({ frame }) => {
       });
     };
 
-    // Create a ResizeObserver instance
-    const resizeObserver = new ResizeObserver(() => {
-      updateFrame();
-    });
+    const resizeObserver = new ResizeObserver(updateFrame);
 
     if (resizeDiv.current) {
       resizeObserver.observe(resizeDiv.current);
     }
+
     return () => {
       resizeObserver.disconnect();
     };
   }, [frame, resizeDiv]);
+
   return (
     <div
       id="resizableDiv"
@@ -46,64 +101,74 @@ const Frame: React.FC<Props> = ({ frame }) => {
         bg-slate-200
         relative
         pt-8
-        "
+      "
       key={frame?.id}
       ref={resizeDiv}
       style={{
-        width: width,
-        height: height,
+        width: frame?.width,
+        height: frame?.height,
         resize: "both",
         overflow: "auto",
       }}
     >
       <div
         className="
-  absolute
-  top-1
-  text-sm
-  font-medium
-  text-gray-600
-  my-1
-  mx-3
-  "
+        absolute
+        top-1
+        text-sm
+        font-medium
+        text-gray-600
+        my-1
+        mx-3
+        "
       >
         {frame?.name}
       </div>
       <div
         className="
-    absolute
-    top-1
-    right-1
-    text-sm
-    font-medium
-    text-gray-600
-    my-1
-    mx-3
-    cursor-pointer
-    "
+          absolute
+          top-1
+          right-1
+          text-sm
+          font-medium
+          text-gray-600
+          my-1
+          mx-3
+          cursor-pointer
+          "
       >
         <BiDotsVerticalRounded
           size={18}
           className="text-gray-400 group-hover:text-gray-600"
-          onClick={
-            () => {}
-            // setOpen((prev) => {
-            //   return !prev;
-            // })
-          }
+          onClick={() => {
+            setOpen((prev) => !prev);
+          }}
+        />
+        <FrameMenu
+          open={open}
+          setOpen={setOpen}
+          deleteFrame={deleteFrame}
+          setIsUpdateFrameOpen={setUpdateFrameOpen}
         />
       </div>
 
       <webview
         src={frame?.link}
+        id="webview-frame-main"
         className="
-      h-full
-      w-full
-      resize-both
-      overflow-auto
-      rounded-xl
-      shadow-md
-    "
+            h-full
+            w-full
+            resize-both
+            overflow-auto
+            rounded-xl
+            shadow-md
+          "
+      />
+
+      <UpdateFrame
+        open={updateFrameOpen}
+        setOpen={setUpdateFrameOpen}
+        frameData={frame}
       />
     </div>
   );

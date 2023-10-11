@@ -1,19 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { fetchGroupsWithId } from "../helper/groups";
-import {
-  collection,
-  getFirestore,
-  onSnapshot,
-  query,
-  where,
-} from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 import useUser from "../hooks/useUser";
 import { IFrame, IGroup } from "../types";
 import { ArrowLeftIcon } from "lucide-react";
 import AddNewButton from "../components/ui/AddNewButton";
 import AddNewFrame from "../components/modals/AddNewFrame";
 import Frame from "../components/ui/Frame";
+import { fetchFrames } from "../helper/frames";
 
 export const Group = () => {
   //
@@ -26,28 +21,19 @@ export const Group = () => {
   const [frames, setFrames] = useState([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { hash } = useLocation();
 
-  // handlers
-  const fetchFrames = async () => {
-    setLoading(true);
-    const framesRef = collection(db, "frames");
-    const framesQuery = query(
-      framesRef,
-      where("user", "==", user?.uid),
-      where("groupId", "==", id)
-    );
-
-    onSnapshot(framesQuery, async (snapshot) => {
-      const frames = await snapshot.docs.map((doc) => doc.data() as any);
-      setFrames(frames);
-      setLoading(false);
-    });
-  };
+  useEffect(() => {
+    if (hash) {
+      const el = document.getElementById(hash.slice(1));
+      el && el.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [hash, frames]);
 
   useEffect(() => {
     if (id) {
       fetchGroupsWithId(db, user, setGroup, id);
-      fetchFrames();
+      fetchFrames(db, id, setLoading, setFrames);
     }
   }, [id, db, user]);
 
@@ -123,7 +109,9 @@ export const Group = () => {
       "
         >
           {frames.map((frame: IFrame) => (
-            <Frame frame={frame} key={frame.id} />
+            <div id={frame.id} key={frame.id}>
+              <Frame frame={frame} key={frame.id} />
+            </div>
           ))}
           {/* <webview src="https://www.google.com" /> */}
         </div>

@@ -18,6 +18,7 @@ export interface IFrame {
   id: string;
   width: number;
   height: number;
+  groupId?: string;
   xPosition?: number;
   yPosition?: number;
   zoom?: number;

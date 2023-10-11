@@ -1,14 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { IGroup } from "../../types";
 // import { ArrowDown } from "lucide-react";
 import * as FaIcon from "lucide-react";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { Link } from "react-router-dom";
 import UpdateGroup from "../modals/UpdateGroup";
-import { deleteDoc, doc, getFirestore } from "firebase/firestore";
-import { firebaseApp } from "../../config/firebase";
 import GroupMenu from "../DropDowns/GroupMenu";
-import toast from "react-hot-toast";
+import { deleteGroup } from "../../helper/groups";
+import { getFirestore } from "firebase/firestore";
+import { fetchFrames } from "../../helper/frames";
 
 interface IGroupPorps {
   opened?: boolean;
@@ -26,21 +26,18 @@ const Group: React.FC<IGroupPorps> = ({
   const Icon = FaIcon[group?.icon];
   const [open, setOpen] = React.useState(opened);
   const [isUpdateGroupOpen, setIsUpdateGroupOpen] = React.useState(false);
+  const [loading, setLoading] = React.useState(false);
+  const [frames, setFrames] = React.useState([]);
+  const [isFramesOpen, setIsFramesOpen] = React.useState(false);
+  const db = getFirestore();
 
-  const deleteGroup = async () => {
-    const groupId = group.id;
-    const db = getFirestore(firebaseApp);
-    const groupDocRef = doc(db, "groups", groupId);
-
-    try {
-      await deleteDoc(groupDocRef);
-      toast.success("Group deleted successfully");
-      console.log("Group deleted successfully");
-    } catch (error) {
-      console.error("Error deleting group:", error.code);
-      toast.error(error.code);
-    }
-  };
+  useEffect(
+    () => {
+      fetchFrames(db, group.id, setLoading, setFrames);
+    },
+    // eslint-disable-next-line
+    []
+  );
 
   return (
     <div className="relative w-full ">
@@ -59,6 +56,10 @@ const Group: React.FC<IGroupPorps> = ({
         hover:bg-gray-100
         group
         z-1
+        transition
+        duration-700
+        ease-in-out
+
         "
       >
         <Link
@@ -82,21 +83,25 @@ const Group: React.FC<IGroupPorps> = ({
             {group.name}
           </span>
         </Link>
-        {/* {arrow && (
-          <span>
-            <ArrowDown
+        {arrow && (
+          <span
+            className="flex items-center justify-center"
+            onClick={() => setIsFramesOpen((prev) => !prev)}
+          >
+            <FaIcon.ArrowDown
               size={14}
               className={
                 `
-          transform
-          transition
-          duration-300
-          ease-in-out             
-        ` + (opened ? "rotate-180" : "")
+                transform
+                transition
+                duration-500
+                ease-in-out   
+                mr-2          
+              ` + (isFramesOpen ? "rotate-180" : "")
               }
             />
           </span>
-        )} */}
+        )}
         {options && (
           <div className="flex items-center gap-2 mr-2">
             <BiDotsVerticalRounded
@@ -111,7 +116,64 @@ const Group: React.FC<IGroupPorps> = ({
           </div>
         )}
       </div>
-
+      <div>
+        {isFramesOpen && (
+          <div
+            className={`flex flex-col gap-2 relative  transition duration-700 ease-in-out ${
+              isFramesOpen ? "h-auto" : "h-0"
+            }
+          
+          `}
+          >
+            {loading && (
+              <div className="flex items-center justify-center">
+                <div className="w-4 h-4 border-2 border-t-2 border-gray-200 rounded-full animate-spin"></div>
+              </div>
+            )}
+            {frames.map((frame) => (
+              <div
+                key={frame.id}
+                className={`
+              w-full
+              bg-white
+              rounded-xl  
+              flex
+              items-center  
+              cursor-pointer
+              text-gray-500
+              hover:text-gray-700
+              hover:bg-gray-100
+              group
+              z-1
+              ${isFramesOpen ? "opacity-100" : "opacity-0"}
+              transition
+              duration-700
+              ease-in-out
+              ${isFramesOpen ? "h-10" : "h-0"}
+              `}
+              >
+                <FaIcon.Dot />
+                <Link
+                  to={`/group/${group.id}/${"#"}${frame.id}`}
+                  className="flex items-center w-full p-1 mr-2"
+                >
+                  <span
+                    className={`
+          whitespace-nowrap
+          overflow-hidden
+          overflow-ellipsis
+          px-2
+          w-full
+        `}
+                  >
+                    {frame.name}
+                  </span>
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
       {open && (
         <div
           className="
@@ -124,7 +186,7 @@ const Group: React.FC<IGroupPorps> = ({
           <GroupMenu
             open={open}
             setOpen={setOpen}
-            deleteGroup={deleteGroup}
+            deleteGroup={deleteGroup(db, group.id)}
             setIsUpdateGroupOpen={setIsUpdateGroupOpen}
           />
         </div>

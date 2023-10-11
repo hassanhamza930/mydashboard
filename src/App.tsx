@@ -9,7 +9,6 @@ function App() {
 
   useEffect(() => {
     const uid = localStorage.getItem("uid");
-    console.log("uid app useEffect", uid);
     if (uid) {
       setUser(uid);
     } else {

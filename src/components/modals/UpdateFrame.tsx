@@ -1,7 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { doc, getFirestore, setDoc } from "firebase/firestore";
-import { v4 as uuid } from "uuid";
 import validator from "validator";
 //
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./Dialog";
@@ -15,21 +14,21 @@ interface Props {
   open: boolean;
   // eslint-disable-next-line no-unused-vars
   setOpen: (arg: boolean) => void;
-  groupId: string;
+  frameData: IFrame;
 }
 
-const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
+const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
   const db = getFirestore(firebaseApp);
   const user = useUser();
-  const [link, setLink] = useState("");
+  const [link, setLink] = useState(frameData?.link);
   const [errorMessages, setErrorMessages] = useState<string>();
-  const [frame, setFrame] = useState<string>();
-  const [name, setName] = useState<string>();
-  const [width, setWidth] = useState<number>();
-  const [height, setHeight] = useState<number>();
-  const [yPosition, setYPosition] = useState<number>(0);
-  const [xPosition, setXPosition] = useState<number>(0);
-  const [zoom, setZoom] = useState<number>(0);
+  const [frame, setFrame] = useState<string>(frameData?.link);
+  const [name, setName] = useState<string>(frameData?.name);
+  const [width, setWidth] = useState<number>(frameData?.width);
+  const [height, setHeight] = useState<number>(frameData?.height);
+  const [yPosition, setYPosition] = useState<number>(frameData?.yPosition);
+  const [xPosition, setXPosition] = useState<number>(frameData?.xPosition);
+  const [zoom, setZoom] = useState<number>(frameData?.zoom);
 
   // handlers
   const addNewFrame = async () => {
@@ -41,27 +40,14 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
       setErrorMessages("Link is not valid url format eg: https://example.com");
       return;
     }
-
-    if (name === "") {
-      setErrorMessages("Name is required");
-      return;
-    }
-    if (width === 0) {
-      setErrorMessages("Width is required");
-      return;
-    }
-    if (height === 0) {
-      setErrorMessages("Height is required");
-      return;
-    }
-
-    const id = uuid();
+    const id = frameData.id;
+    const docRef = doc(db, "frames", id);
 
     await setDoc(
-      doc(db, "frames", id),
+      docRef,
       {
         user: user.uid,
-        groupId: groupId,
+        groupId: frameData.groupId,
         link: frame,
         name,
         width,
@@ -85,36 +71,43 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
   };
 
   const handleYScroll = () => {
-    const webView = document.getElementById("webview-frame");
-
+    const webView = document.getElementById("webview-frame-update");
+    if (!webView) return;
     // @ts-ignore
-    webView.executeJavaScript(
-      `window.scrollTo(${xPosition * 100}, ${yPosition * 100});`
-    );
+    webView.executeJavaScript(`window.scrollTo(0, ${yPosition * 100})`);
   };
+
   const handleXScroll = () => {
-    const webView = document.getElementById("webview-frame");
-
+    const webView = document.getElementById("webview-frame-update");
+    if (!webView) return;
     // @ts-ignore
-    webView.executeJavaScript(
-      `window.scrollTo(${xPosition * 100}, ${yPosition * 100});`
-    );
+    webView.executeJavaScript(`window.scrollTo(${xPosition * 100}, 0)`);
   };
+
   function setZoomFactor(zoomFactor) {
-    const webView = document.getElementById("webview-frame");
+    const webView = document.getElementById("webview-frame-update");
+    if (!webView) return;
     // @ts-ignore
     webView.setZoomFactor(zoomFactor);
   }
+
+  useEffect(() => {
+    if (frameData?.zoom) {
+      setZoomFactor(zoom);
+      handleXScroll();
+      handleYScroll();
+    }
+  }, [frameData]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent className="bg-white min-w-[90vw] max-w-[90vw] h-[90vh]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-left">
-            New Frame
+            Update Frame
           </DialogTitle>
         </DialogHeader>
-        <div className="">
+        <div>
           <div className="w-full">
             <form className="flex gap-x-4">
               <input
@@ -155,7 +148,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
               </button>
             </form>
             {errorMessages && (
-              <p className="text-red-500 text-xs">{errorMessages}</p>
+              <div className="text-red-500 text-xs">{errorMessages}</div>
             )}
           </div>
           <hr className="my-4" />
@@ -214,40 +207,19 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                     onChange={(e) => {
                       setName(e.target.value);
                     }}
-                    placeholder="Frame name"
-                    className="
-                      w-full
-                      bg-transparent
-                      border
-                      border-gray-200
-                      rounded-xl
-                      p-3
-                      px-8
-                      shadow-sm
+                    placeholder="Update Frame name"
+                    className=" w-full bg-transparent border border-gray-200 rounded-xl p-3 px-8 shadow-sm
                     "
                   />
                 </div>
                 {/* name - end */}
                 <div
-                  className="
-                    w-full
-                    bg-white
-                    rounded-xl
-                    p-3
-                    
-                    gap-3
-                    border
-                    border-gray-200
-                    shadow-sm
-                    mb-3
+                  className=" w-full bg-white rounded-xl p-3  gap-3 border border-gray-200 shadow-sm mb-3
                     "
                 >
                   <label
                     htmlFor="size1"
-                    className="
-                    text-gray-600
-                    text-md
-                    mb-4
+                    className=" text-gray-600 text-md mb-4
                   "
                   >
                     Custom Size
@@ -266,17 +238,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                         min={10}
                         max={1000}
                         placeholder="Width in px"
-                        className="
-                        w-full
-                        accent-[#111]
-                        bg-transparent
-                        border
-                        border-gray-200
-                        rounded-xl
-                        p-3
-                        px-8
-                        shadow-sm
-                        mr-2
+                        className=" w-full accent-[#111] bg-transparent border border-gray-200 rounded-xl py-3 shadow-sm mr-2
                         "
                       />
                     </div>
@@ -293,34 +255,14 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                         min={100}
                         max={1000}
                         placeholder="Height in px"
-                        className="
-                        w-full
-                        bg-transparent
-                        accent-[#111]
-                        border
-                        border-gray-200
-                        rounded-xl
-                        p-3
-                        px-8
-                        shadow-sm
-                        mr-2
+                        className=" w-full bg-transparent accent-[#111] border border-gray-200 rounded-xl py-3 shadow-sm mr-2
                         "
                       />
                     </div>
                   </div>
                 </div>
                 <div
-                  className="
-                    w-full
-                    bg-white
-                    rounded-xl
-                    p-3
-                    
-                    gap-3
-                    border
-                    border-gray-200
-                    shadow-sm
-                    mb-3
+                  className=" w-full bg-white rounded-xl p-3  gap-3 border border-gray-200 shadow-sm mb-3
                     "
                 >
                   <label
@@ -348,17 +290,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                           setYPosition(Number(e.target.value));
                           handleYScroll();
                         }}
-                        className="
-                        w-full
-                        accent-[#111]
-                        bg-transparent
-                        border
-                        border-gray-200
-                        rounded-xl
-                        p-3
-                        px-8
-                        shadow-sm
-                        mr-2
+                        className=" w-full accent-[#111] bg-transparent border border-gray-200 rounded-xl py-3 shadow-sm mr-2
                         "
                       />
                     </div>
@@ -383,8 +315,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                         border
                         border-gray-200
                         rounded-xl
-                        p-3
-                        px-8
+                        py-3
                         shadow-sm
                         mr-2
                         "
@@ -436,6 +367,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                         border-gray-200
                         rounded-xl
                         py-3
+                        
                         shadow-sm
                         mr-2
                         "
@@ -459,15 +391,15 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
             >
               {frame ? (
                 <webview
-                  id="webview-frame"
+                  id="webview-frame-update"
                   src={frame}
                   className="
-                w-full
-                bg-slate-200
-                rounded-xl
-                p-3
-                h-full
-                "
+                        w-full
+                        bg-slate-200
+                        rounded-xl
+                        p-3
+                        h-full
+                        "
                 />
               ) : (
                 <p className="text-gray-400 text-sm">"No frame selected"</p>
@@ -488,7 +420,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                 await addNewFrame();
               }}
             >
-              <span className="text-white">Create</span>
+              <span className="text-white">Update</span>
             </Button>
           </div>
         </div>
@@ -497,4 +429,4 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
   );
 };
 
-export default AddNewFrame;
+export default UpdateFrame;

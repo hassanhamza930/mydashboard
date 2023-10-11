@@ -15,6 +15,7 @@ import Button from "../ui/Button";
 import { firebaseApp } from "../../config/firebase";
 import useUser from "../../hooks/useUser";
 import { FaSearch } from "react-icons/fa";
+import { IFrame } from "../../types";
 
 interface Props {
   open: boolean;
@@ -32,6 +33,9 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
   const [name, setName] = useState<string>();
   const [width, setWidth] = useState<number>();
   const [height, setHeight] = useState<number>();
+  const [yPosition, setYPosition] = useState<number>(0);
+  const [xPosition, setXPosition] = useState<number>(0);
+  const [zoom, setZoom] = useState<number>(0);
 
   // handlers
   const addNewFrame = async () => {
@@ -55,8 +59,11 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
         name,
         width,
         height,
+        yPosition,
+        xPosition,
+        zoom,
         id: id,
-      },
+      } as IFrame,
       {
         merge: true,
       }
@@ -69,6 +76,28 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
       });
     setOpen(false);
   };
+
+  const handleYScroll = () => {
+    const webView = document.getElementById("webview-frame");
+
+    // @ts-ignore
+    webView.executeJavaScript(
+      `window.scrollTo(${xPosition * 100}, ${yPosition * 100});`
+    );
+  };
+  const handleXScroll = () => {
+    const webView = document.getElementById("webview-frame");
+
+    // @ts-ignore
+    webView.executeJavaScript(
+      `window.scrollTo(${xPosition * 100}, ${yPosition * 100});`
+    );
+  };
+  function setZoomFactor(zoomFactor) {
+    const webView = document.getElementById("webview-frame");
+    // @ts-ignore
+    webView.setZoomFactor(zoomFactor);
+  }
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -129,8 +158,8 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
           bg-white
           rounded-xl
           flex
-          items-center
-          justify-between
+          items-start
+          justify-start
           gap-3
           "
           >
@@ -144,6 +173,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
               "
             >
               <div>
+                {/* name */}
                 <div
                   className="
                     w-full
@@ -190,9 +220,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                     "
                   />
                 </div>
-                <div className="progressbar">
-                  <div className="progressbar__bar"></div>
-                </div>
+                {/* name - end */}
                 <div
                   className="
                     w-full
@@ -217,18 +245,23 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                   >
                     Custom Size
                   </label>
-                  <div className="flex">
-                    <input
-                      value={width}
-                      onChange={(e) => {
-                        setWidth(parseInt(e.target.value));
-                      }}
-                      type="number"
-                      min={10}
-                      max={1000}
-                      placeholder="Width in px"
-                      className="
+                  <div className="flex flex-col">
+                    <div>
+                      <label htmlFor="width">Width</label>
+                      <input
+                        id="width"
+                        name="width"
+                        value={width}
+                        onChange={(e) => {
+                          setWidth(parseInt(e.target.value));
+                        }}
+                        type="range"
+                        min={10}
+                        max={1000}
+                        placeholder="Width in px"
+                        className="
                         w-full
+                        accent-[#111]
                         bg-transparent
                         border
                         border-gray-200
@@ -238,18 +271,159 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                         shadow-sm
                         mr-2
                         "
-                    />
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="height">Height</label>
+                      <input
+                        id="height"
+                        name="height"
+                        value={height}
+                        onChange={(e) => {
+                          setHeight(parseInt(e.target.value));
+                        }}
+                        type="range"
+                        min={100}
+                        max={1000}
+                        placeholder="Height in px"
+                        className="
+                        w-full
+                        bg-transparent
+                        accent-[#111]
+                        border
+                        border-gray-200
+                        rounded-xl
+                        p-3
+                        px-8
+                        shadow-sm
+                        mr-2
+                        "
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className="
+                    w-full
+                    bg-white
+                    rounded-xl
+                    p-3
+                    
+                    gap-3
+                    border
+                    border-gray-200
+                    shadow-sm
+                    mb-3
+                    "
+                >
+                  <label
+                    htmlFor="size1"
+                    className="
+                    text-gray-600
+                    text-md
+                    mb-4
+                  "
+                  >
+                    Scroll Position
+                  </label>
+                  <div className="flex flex-col">
+                    <div>
+                      <label htmlFor="ySlider">Y-Scroll</label>
+                      <input
+                        name="ySlider"
+                        type="range"
+                        id="ySlider"
+                        min="0"
+                        max="100"
+                        step="1"
+                        value={yPosition}
+                        onChange={(e) => {
+                          setYPosition(Number(e.target.value));
+                          handleYScroll();
+                        }}
+                        className="
+                        w-full
+                        accent-[#111]
+                        bg-transparent
+                        border
+                        border-gray-200
+                        rounded-xl
+                        p-3
+                        px-8
+                        shadow-sm
+                        mr-2
+                        "
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="xSlider">X-Scroll</label>
+                      <input
+                        name="ySlider"
+                        type="range"
+                        id="xSlider"
+                        min="0"
+                        max="100"
+                        step="1"
+                        value={xPosition}
+                        onChange={(e) => {
+                          setXPosition(Number(e.target.value));
+                          handleXScroll();
+                        }}
+                        className="
+                        w-full
+                        accent-[#111]
+                        bg-transparent
+                        border
+                        border-gray-200
+                        rounded-xl
+                        p-3
+                        px-8
+                        shadow-sm
+                        mr-2
+                        "
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div
+                  className="
+                    w-full
+                    bg-white
+                    rounded-xl
+                    p-3
+                    
+                    gap-3
+                    border
+                    border-gray-200
+                    shadow-sm
+                    mb-3
+                    "
+                >
+                  <label
+                    htmlFor="size1"
+                    className="
+                    text-gray-600
+                    text-md
+                    mb-4
+                  "
+                  >
+                    Custom Zoom
+                  </label>
+                  <div className="flex flex-col">
                     <input
-                      value={height}
+                      type="range"
+                      id="xSlider"
+                      min="0"
+                      max="2"
+                      step=".1"
+                      value={zoom}
                       onChange={(e) => {
-                        setHeight(parseInt(e.target.value));
+                        setZoom(Number(e.target.value));
+                        setZoomFactor(Number(e.target.value));
                       }}
-                      type="number"
-                      min={10}
-                      max={1000}
-                      placeholder="Height in px"
                       className="
                         w-full
+                        accent-[#111]
                         bg-transparent
                         border
                         border-gray-200
@@ -264,17 +438,22 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                 </div>
               </div>
             </div>
+
+            {/* frame */}
             <div
-              className="
-              w-11/12
+              style={{
+                width: `${width}px`,
+                height: `${height}px`,
+              }}
+              className={`
               rounded-xl
               p-3
-              h-[70vh]
               relative
-              "
+              `}
             >
               {frame ? (
                 <webview
+                  id="webview-frame"
                   src={frame}
                   className="
                 w-full

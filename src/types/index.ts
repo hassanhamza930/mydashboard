@@ -18,5 +18,7 @@ export interface IFrame {
   id: string;
   width: number;
   height: number;
-  icon?: string;
+  xPosition?: number;
+  yPosition?: number;
+  zoom?: number;
 }

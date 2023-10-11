@@ -1,11 +1,14 @@
 import React from "react";
 import { ToastProvider } from "./Toaster";
+import { RecoilRootProvider } from "./Recoil";
 
 export const Providers = ({ children }: { children: React.ReactNode }) => {
   return (
     <>
-      <ToastProvider />
-      {children}
+      <RecoilRootProvider>
+        <ToastProvider />
+        {children}
+      </RecoilRootProvider>
     </>
   );
 };

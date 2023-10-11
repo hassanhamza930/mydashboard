@@ -11,3 +11,14 @@ export interface IGroup {
   id: string;
   icon?: string;
 }
+
+export interface IFrame {
+  name: string;
+  link: string;
+  id: string;
+  width: number;
+  height: number;
+  xPosition?: number;
+  yPosition?: number;
+  zoom?: number;
+}

@@ -6,6 +6,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/DropdowmMenu";
+import { Edit, Trash } from "lucide-react";
 
 interface IGroupMenuProps {
   open: boolean;
@@ -24,25 +25,26 @@ const GroupMenu: React.FC<IGroupMenuProps> = ({
     <DropdownMenu aria-label="Group menu" open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger></DropdownMenuTrigger>
       <DropdownMenuContent>
-        {/* <DropdownMenuLabel>My Account</DropdownMenuLabel> */}
         <DropdownMenuItem
           onClick={() => {
             setIsUpdateGroupOpen(true);
             setOpen(false);
           }}
         >
-          edit
+          <div className="flex items-center gap-x-2">
+            <Edit size={12} /> Edit
+          </div>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        {/* <DropdownMenuItem>Billing</DropdownMenuItem>
-        <DropdownMenuItem>Team</DropdownMenuItem> */}
         <DropdownMenuItem
           onClick={() => {
             deleteGroup();
             setOpen(false);
           }}
         >
-          delete
+          <div className="flex items-center gap-x-2">
+            <Trash size={12} /> Delete
+          </div>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

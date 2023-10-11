@@ -16,6 +16,7 @@ function App() {
       setUser(null);
     }
   }, []);
+
   return (
     <>
       <HashRouter>
@@ -27,14 +28,12 @@ function App() {
             </>
           )}
           <Route element={<Layout />}>
+            <Route path="/" element={<Dashboard />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/group/:id" element={<Group />} />
           </Route>
 
-          <Route
-            path="*"
-            element={user ? <Navigate to="/dashboard" /> : <Navigate to="/" />}
-          />
+          <Route path="*" element={<Navigate to="/" />} />
         </Routes>
       </HashRouter>
     </>

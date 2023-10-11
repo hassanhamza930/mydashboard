@@ -39,7 +39,6 @@ const Group: React.FC<IGroupPorps> = ({
     } catch (error) {
       console.error("Error deleting group:", error.code);
       toast.error(error.code);
-      // Handle error, e.g., show an error message to the user
     }
   };
 
@@ -49,13 +48,10 @@ const Group: React.FC<IGroupPorps> = ({
         className="
         w-full
         bg-white
-        rounded-xl
-   
+        rounded-xl  
         my-2
-
         flex
-        items-center
-        
+        items-center   
         shadow-md
         cursor-pointer
         text-gray-500
@@ -63,10 +59,12 @@ const Group: React.FC<IGroupPorps> = ({
         hover:bg-gray-100
         group
         z-1
-
         "
       >
-        <Link to={`/group/${group.id}`} className="flex w-full p-3 mr-2">
+        <Link
+          to={`/group/${group.id}`}
+          className="flex items-center w-full p-3 mr-2"
+        >
           <span>
             {(group?.icon && <Icon size={20} className="mr-2" />) ?? null}
           </span>

@@ -34,14 +34,14 @@ export const Dashboard = () => {
         </h1>
         <div
           className="
-          grid
-          xl:grid-cols-4
-          md:grid-cols-3
-          sm:grid-cols-2
-          grid-cols-1
-          gap-5
-          w-full
-        "
+              grid
+              xl:grid-cols-4
+              md:grid-cols-3
+              sm:grid-cols-2
+              grid-cols-1
+              gap-5
+              w-full
+            "
         >
           {groups.map((group, index) => (
             <Group key={group.id + index} options group={group} />

@@ -3,16 +3,17 @@ import { useNavigate, useParams } from "react-router-dom";
 import { fetchGroupsWithId } from "../helper/groups";
 import {
   collection,
-  getDocs,
   getFirestore,
+  onSnapshot,
   query,
   where,
 } from "firebase/firestore";
 import useUser from "../hooks/useUser";
-import { IGroup } from "../types";
+import { IFrame, IGroup } from "../types";
 import { ArrowLeftIcon } from "lucide-react";
 import AddNewButton from "../components/ui/AddNewButton";
 import AddNewFrame from "../components/modals/AddNewFrame";
+import Frame from "../components/ui/Frame";
 
 export const Group = () => {
   //
@@ -24,18 +25,23 @@ export const Group = () => {
   const [group, setGroup] = useState<IGroup>(null);
   const [frames, setFrames] = useState([]);
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   // handlers
   const fetchFrames = async () => {
+    setLoading(true);
+    const framesRef = collection(db, "frames");
     const framesQuery = query(
-      collection(db, "frames"),
+      framesRef,
       where("user", "==", user?.uid),
       where("groupId", "==", id)
     );
 
-    const snapshot = await getDocs(framesQuery);
-    const frames = snapshot.docs.map((doc) => doc.data() as any);
-    setFrames(frames);
+    onSnapshot(framesQuery, async (snapshot) => {
+      const frames = await snapshot.docs.map((doc) => doc.data() as any);
+      setFrames(frames);
+      setLoading(false);
+    });
   };
 
   useEffect(() => {
@@ -43,7 +49,18 @@ export const Group = () => {
       fetchGroupsWithId(db, user, setGroup, id);
       fetchFrames();
     }
-  }, [id, db, user, open]);
+  }, [id, db, user]);
+
+  if (loading)
+    return (
+      <div className="w-full h-[50vh] flex items-center justify-center">
+        <div
+          className="animate-spin rounded-full h-12 w-12  border-b-2 
+          border-blue-500
+        "
+        ></div>
+      </div>
+    );
 
   return (
     <div>
@@ -105,49 +122,8 @@ export const Group = () => {
         gap-5
       "
         >
-          {frames.map((frame: any) => (
-            <div
-              className="
-              p-1
-              rounded-xl
-              shadow-sm
-              bg-slate-200
-              relative
-              pt-8
-              "
-              key={frame.id}
-              style={{
-                width: frame.width,
-                height: frame.height,
-                resize: "both",
-                overflow: "auto",
-              }}
-            >
-              <p
-                className="
-              absolute
-              top-1
-              text-sm
-              font-medium
-              text-gray-600
-              my-1
-              mx-3
-              "
-              >
-                {frame.name}
-              </p>
-              <webview
-                src={frame.link}
-                className="
-                  h-full
-                  w-full
-                  resize-both
-                  overflow-auto
-                  rounded-xl
-                  shadow-md
-                "
-              />
-            </div>
+          {frames.map((frame: IFrame) => (
+            <Frame frame={frame} key={frame.id} />
           ))}
           {/* <webview src="https://www.google.com" /> */}
         </div>

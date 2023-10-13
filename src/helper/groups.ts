@@ -7,10 +7,8 @@ import {
   query,
   where,
 } from "firebase/firestore";
-import { IGroup } from "../types";
+import { IGroup, IUser } from "../types";
 import toast from "react-hot-toast";
-
-const uid = localStorage.getItem("uid");
 
 /**
  *
@@ -18,14 +16,21 @@ const uid = localStorage.getItem("uid");
  * @param user
  * @param setGroups
  */
-export const fetchGroups = async (db, user, setGroups) => {
+export const fetchGroups = async (
+  db,
+  user: IUser,
+  setGroups,
+  cb?: () => void
+) => {
+  if (!user?.uid) return;
   const groupsCollection = collection(db, "groups");
 
-  const groupsQuery = query(groupsCollection, where("user", "==", uid));
+  const groupsQuery = query(groupsCollection, where("user", "==", user?.uid));
 
   onSnapshot(groupsQuery, (querySnapshot) => {
     const groupArr = querySnapshot.docs.map((doc) => doc.data() as IGroup);
     setGroups(groupArr);
+    if (cb) cb();
   });
 };
 
@@ -36,10 +41,11 @@ export const fetchGroups = async (db, user, setGroups) => {
  * @param setGroups
  * @param id
  */
-export const fetchGroupsWithId = async (db, user, setGroups, id) => {
+export const fetchGroupsWithId = async (db, user: IUser, setGroups, id) => {
+  if (!user?.uid) return;
   const groupsQuery = query(
     collection(db, "groups"),
-    where("user", "==", uid),
+    where("user", "==", user?.uid),
     where("id", "==", id)
   );
 
@@ -49,6 +55,11 @@ export const fetchGroupsWithId = async (db, user, setGroups, id) => {
   setGroups(groupArr[0]);
 };
 
+/**
+ *
+ * @param db
+ * @param groupId
+ */
 export const deleteGroup = async (db, groupId) => {
   const groupDocRef = doc(db, "groups", groupId);
 

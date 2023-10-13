@@ -92,7 +92,6 @@ const IconSelector: React.FC<Props> = ({ open, setOpen, setSelectedIcon }) => {
                                 ease-in-out
                                 border
                                 border-gray-200
-
                                 hover:bg-gray-100
 
                                 "

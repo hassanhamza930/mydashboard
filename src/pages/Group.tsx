@@ -9,6 +9,7 @@ import AddNewButton from "../components/ui/AddNewButton";
 import AddNewFrame from "../components/modals/AddNewFrame";
 import Frame from "../components/ui/Frame";
 import { fetchFrames } from "../helper/frames";
+import { motion } from "framer-motion";
 
 export const Group = () => {
   //
@@ -37,18 +38,15 @@ export const Group = () => {
     }
   }, [id, db, user]);
 
-  if (loading)
-    return (
-      <div className="w-full h-[50vh] flex items-center justify-center">
-        <div
-          className="animate-spin rounded-full h-12 w-12  border-b-2 
-          border-blue-500
+  return loading ? (
+    <div className="w-full h-[50vh] flex items-center justify-center">
+      <div
+        className="animate-spin rounded-full h-12 w-12  border-b-2 
+          border-primary
         "
-        ></div>
-      </div>
-    );
-
-  return (
+      ></div>
+    </div>
+  ) : (
     <div>
       <div
         className="
@@ -108,10 +106,22 @@ export const Group = () => {
         gap-5
       "
         >
-          {frames.map((frame: IFrame) => (
-            <div id={frame.id} key={frame.id}>
-              <Frame frame={frame} key={frame.id} />
-            </div>
+          {frames.map((frame: IFrame, index) => (
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.3, delay: 0.1 * index }}
+              variants={{
+                visible: { opacity: 1, y: 0 },
+                hidden: { opacity: 0, y: 20 },
+              }}
+              key={frame.id}
+            >
+              <div id={frame.id} key={frame.id}>
+                <Frame frame={frame} key={frame.id} />
+              </div>
+            </motion.div>
           ))}
           {/* <webview src="https://www.google.com" /> */}
         </div>

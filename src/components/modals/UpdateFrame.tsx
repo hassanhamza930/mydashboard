@@ -74,14 +74,14 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
     const webView = document.getElementById("webview-frame-update");
     if (!webView) return;
     // @ts-ignore
-    webView.executeJavaScript(`window.scrollTo(0, ${yPosition * 100})`);
+    webView.executeJavaScript(`window.scrollTo(${xPosition}, ${yPosition})`);
   };
 
   const handleXScroll = () => {
     const webView = document.getElementById("webview-frame-update");
     if (!webView) return;
     // @ts-ignore
-    webView.executeJavaScript(`window.scrollTo(${xPosition * 100}, 0)`);
+    webView.executeJavaScript(`window.scrollTo(${xPosition}, ${yPosition})`);
   };
 
   function setZoomFactor(zoomFactor) {
@@ -112,7 +112,7 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
             <form className="flex gap-x-4">
               <input
                 type="text"
-                className="w-full bg-transparent border border-gray-200 rounded-xl p-3  px-8 shadow-sm"
+                className="w-full bg-transparent border border-slate-400 rounded-xl p-3  px-8 "
                 placeholder="Frame link"
                 value={link}
                 onChange={(e) => {
@@ -122,7 +122,7 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
               />
               <button
                 type="submit"
-                className="bg-transparent border border-gray-200 rounded-xl p-3  px-8 shadow-sm"
+                className="bg-transparent border border-slate-400 rounded-xl p-3  px-8 "
                 onClick={(e) => {
                   e.preventDefault();
 
@@ -185,8 +185,8 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
                     justify-between
                     gap-3
                     border
-                    border-gray-200
-                    shadow-sm
+                    border-slate-400
+                    
                     mb-3
                     "
                 >
@@ -208,13 +208,13 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
                       setName(e.target.value);
                     }}
                     placeholder="Update Frame name"
-                    className=" w-full bg-transparent border border-gray-200 rounded-xl p-3 px-8 shadow-sm
+                    className=" w-full bg-transparent border border-slate-400 rounded-xl p-3 px-8 
                     "
                   />
                 </div>
                 {/* name - end */}
                 <div
-                  className=" w-full bg-white rounded-xl p-3  gap-3 border border-gray-200 shadow-sm mb-3
+                  className=" w-full bg-white rounded-xl p-3  gap-3 border border-slate-400  mb-3
                     "
                 >
                   <label
@@ -238,7 +238,7 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
                         min={10}
                         max={1000}
                         placeholder="Width in px"
-                        className=" w-full accent-[#111] bg-transparent border border-gray-200 rounded-xl py-3 shadow-sm mr-2
+                        className=" w-full accent-[#111] bg-transparent border border-slate-400 rounded-xl py-3  mr-2
                         "
                       />
                     </div>
@@ -255,14 +255,14 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
                         min={100}
                         max={1000}
                         placeholder="Height in px"
-                        className=" w-full bg-transparent accent-[#111] border border-gray-200 rounded-xl py-3 shadow-sm mr-2
+                        className=" w-full bg-transparent accent-[#111] border border-slate-400 rounded-xl py-3  mr-2
                         "
                       />
                     </div>
                   </div>
                 </div>
                 <div
-                  className=" w-full bg-white rounded-xl p-3  gap-3 border border-gray-200 shadow-sm mb-3
+                  className=" w-full bg-white rounded-xl p-3  gap-3 border border-slate-400  mb-3
                     "
                 >
                   <label
@@ -283,14 +283,14 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
                         type="range"
                         id="ySlider"
                         min="0"
-                        max="100"
-                        step="1"
+                        max="10000"
+                        step="100"
                         value={yPosition}
                         onChange={(e) => {
                           setYPosition(Number(e.target.value));
                           handleYScroll();
                         }}
-                        className=" w-full accent-[#111] bg-transparent border border-gray-200 rounded-xl py-3 shadow-sm mr-2
+                        className=" w-full accent-[#111] bg-transparent border border-slate-400 rounded-xl py-3  mr-2
                         "
                       />
                     </div>
@@ -301,8 +301,8 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
                         type="range"
                         id="xSlider"
                         min="0"
-                        max="100"
-                        step="1"
+                        max="10000"
+                        step="100"
                         value={xPosition}
                         onChange={(e) => {
                           setXPosition(Number(e.target.value));
@@ -313,10 +313,10 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
                         accent-[#111]
                         bg-transparent
                         border
-                        border-gray-200
+                        border-slate-400
                         rounded-xl
                         py-3
-                        shadow-sm
+                        
                         mr-2
                         "
                       />
@@ -332,8 +332,8 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
                     
                     gap-3
                     border
-                    border-gray-200
-                    shadow-sm
+                    border-slate-400
+                    
                     mb-3
                     "
                 >
@@ -364,11 +364,11 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
                         accent-[#111]
                         bg-transparent
                         border
-                        border-gray-200
+                        border-slate-400
                         rounded-xl
                         py-3
                         
-                        shadow-sm
+                        
                         mr-2
                         "
                     />
@@ -411,7 +411,7 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
               onClick={() => {
                 setOpen(false);
               }}
-              className="bg-transparent border-2 hover:opacity-75"
+              className="bg-transparent border border-slate-400 hover:opacity-75"
             >
               <span className="text-darkgray">cancel</span>
             </Button>

@@ -7,20 +7,24 @@ import {
   DropdownMenuTrigger,
 } from "../ui/DropdowmMenu";
 import { Edit, Trash } from "lucide-react";
+import { deleteGroup } from "../../helper/groups";
+import { getFirestore } from "firebase/firestore";
+import { IGroup } from "../../types";
 
 interface IGroupMenuProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   setIsUpdateGroupOpen?: any;
-  deleteGroup?: any;
+  group: IGroup;
 }
 
 const GroupMenu: React.FC<IGroupMenuProps> = ({
   open,
   setOpen,
   setIsUpdateGroupOpen,
-  deleteGroup,
+  group,
 }) => {
+  const db = getFirestore();
   return (
     <DropdownMenu aria-label="Group menu" open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger></DropdownMenuTrigger>
@@ -38,7 +42,7 @@ const GroupMenu: React.FC<IGroupMenuProps> = ({
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={() => {
-            deleteGroup();
+            deleteGroup(db, group?.id);
             setOpen(false);
           }}
         >

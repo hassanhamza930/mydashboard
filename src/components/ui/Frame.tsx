@@ -47,14 +47,14 @@ const Frame: React.FC<Props> = ({ frame }) => {
   const handleXScroll = () => {
     handleWebViewAction((webView) => {
       // @ts-ignore
-      webView.executeJavaScript(`window.scrollTo(${frame.xPosition * 100}, 0)`);
+      webView.executeJavaScript(`window.scrollTo(${frame.xPosition}, 0)`);
     });
   };
 
   const handleYScroll = () => {
     handleWebViewAction((webView) => {
       // @ts-ignore
-      webView.executeJavaScript(`window.scrollTo(0, ${frame.yPosition * 100})`);
+      webView.executeJavaScript(`window.scrollTo(0, ${frame.yPosition})`);
     });
   };
 

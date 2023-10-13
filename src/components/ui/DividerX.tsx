@@ -3,7 +3,7 @@ const DividerX = () => {
     <div
       className="
         border-b
-        border-gray-200
+        border-slate-500
         w-full
         h-[1px]
         flex

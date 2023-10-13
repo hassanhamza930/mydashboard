@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./Dialog";
 import Button from "../ui/Button";
 import { firebaseApp } from "../../config/firebase";
 import { IGroup } from "../../types";
+import ColorSelection from "../ui/ColorSelection";
 
 interface Props {
   open: boolean;
@@ -15,11 +16,20 @@ interface Props {
   group: IGroup;
 }
 
+const colors = [
+  { id: 1, name: "Light Blue", hex: "#87CEFA" },
+  { id: 2, name: "Pale Green", hex: "#98FB98" },
+  { id: 3, name: "Lavender", hex: "#E6E6FA" },
+  { id: 4, name: "Silver", hex: "#111" },
+];
+
 const UpdateGroup: React.FC<Props> = ({ open, setOpen, group }) => {
   const db = getFirestore(firebaseApp);
   const [name, setName] = useState(group?.name);
   const [selectedIcon, setSelectedIcon] = useState<string>(group?.icon);
   const [isIconSelectorOpen, setIsIconSelectorOpen] = useState(false);
+  const [selectedColor, setSelectedColor] = useState("");
+
   const IconSelected = FaIcon[selectedIcon];
   const updateGroup = async () => {
     const docRef = doc(db, "groups", group.id);
@@ -27,6 +37,7 @@ const UpdateGroup: React.FC<Props> = ({ open, setOpen, group }) => {
     await updateDoc(docRef, {
       name: name,
       icon: selectedIcon,
+      color: selectedColor,
     })
       .then(() => {
         toast.success("group updated");
@@ -34,6 +45,9 @@ const UpdateGroup: React.FC<Props> = ({ open, setOpen, group }) => {
       .catch((err) => {
         toast.error(err.code);
       });
+  };
+  const handleColorChange = (color: string) => {
+    setSelectedColor(color);
   };
 
   return (
@@ -66,6 +80,16 @@ const UpdateGroup: React.FC<Props> = ({ open, setOpen, group }) => {
             <div className="flex justify-center items-center bg-gray-200 rounded-xl p-3 my-2 px-8 shadow-sm">
               <IconSelected />
             </div>
+          </div>{" "}
+          <div className="flex justify-evenly items-center gap-3">
+            {colors.map((color) => (
+              <ColorSelection
+                selectedColor={selectedColor}
+                key={color.id}
+                color={color}
+                handleColorChange={handleColorChange}
+              />
+            ))}
           </div>
         </div>
         <div className="flex justify-between items-center gap-3">

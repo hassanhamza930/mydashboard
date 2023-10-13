@@ -9,6 +9,7 @@ import { firebaseApp } from "../config/firebase";
 import { IGroup } from "../types";
 import useUser from "../hooks/useUser";
 import { fetchGroups } from "../helper/groups";
+import { motion } from "framer-motion";
 
 const Sidebar = () => {
   // states
@@ -24,7 +25,7 @@ const Sidebar = () => {
 
   useEffect(() => {
     fetchGroups(db, user, setGroups);
-  }, [isAddNewGroupOpen, db, user]);
+  }, [db, user]);
 
   return (
     <div
@@ -39,7 +40,10 @@ const Sidebar = () => {
       "
     >
       <div className="relative w-full mb-5">
-        <AddNewButton className="text-md" onClick={handleClick}>
+        <AddNewButton
+          className="text-md bg-primary text-white"
+          onClick={handleClick}
+        >
           Add Group
         </AddNewButton>
       </div>
@@ -47,7 +51,19 @@ const Sidebar = () => {
       <DividerX />
       <div className="w-full py-3">
         {groups.map((group, index) => (
-          <Group key={group.id + index} arrow group={group} />
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            transition={{ duration: 0.2, delay: 0.1 * index }}
+            variants={{
+              visible: { opacity: 1, y: 0 },
+              hidden: { opacity: 0, y: 20 },
+            }}
+            key={group.id + index}
+          >
+            <Group key={group.id + index} arrow group={group} />
+          </motion.div>
         ))}
       </div>
       {}

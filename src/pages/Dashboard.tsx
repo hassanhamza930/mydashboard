@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getFirestore } from "firebase/firestore";
+import { motion } from "framer-motion";
 //
 import { fetchGroups } from "../helper/groups";
 import useUser from "../hooks/useUser";
@@ -10,12 +11,16 @@ import Group from "../components/ui/Group";
 export const Dashboard = () => {
   // states
   const [groups, setGroups] = useState<IGroup[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
   const db = getFirestore(firebaseApp);
   const user = useUser();
 
   // handlers
   useEffect(() => {
-    fetchGroups(db, user, setGroups);
+    setLoading(true);
+    fetchGroups(db, user, setGroups, () => {
+      setLoading(false);
+    });
   }, [user, db]);
 
   return (
@@ -43,8 +48,28 @@ export const Dashboard = () => {
               w-full
             "
         >
+          {
+            // if loading
+            loading && (
+              <div className=" absolute flex w-full h-[60vh] justify-center items-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+              </div>
+            )
+          }
           {groups.map((group, index) => (
-            <Group key={group.id + index} options group={group} />
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              transition={{ duration: 0.3, delay: 0.1 * index }}
+              variants={{
+                visible: { opacity: 1, x: 0 },
+                hidden: { opacity: 0, x: 20 },
+              }}
+              key={group.id + index}
+            >
+              <Group key={group.id + index} options group={group} />
+            </motion.div>
           ))}
         </div>
       </div>

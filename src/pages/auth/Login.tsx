@@ -25,21 +25,24 @@ export const Login = () => {
   // states
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const auth=getAuth();
+  const auth = getAuth();
 
   const navigate = useNavigate();
   const ipcRenderer = useIpcRenderer();
 
-
-  async function handleForgotPassword(){
-    if(email==""){
-      toast.error("Please enter the email properly")
-    }
-    else{
-      sendPasswordResetEmail(auth,email).then(()=>{toast.success("Password Reset Email Sent")}).catch((err)=>{toast.success(err.message)})
+  async function handleForgotPassword() {
+    if (email == "") {
+      toast.error("Please enter the email properly");
+    } else {
+      sendPasswordResetEmail(auth, email)
+        .then(() => {
+          toast.success("Password Reset Email Sent");
+        })
+        .catch((err) => {
+          toast.success(err.message);
+        });
     }
   }
-
 
   useEffect(() => {
     ipcRenderer.on("uid", (event, token) => {
@@ -84,7 +87,7 @@ export const Login = () => {
             <img src={logo} alt="logo" width={40} />
             <h2 className="font-semibold text-2xl my-5">Login</h2>
           </div>
-          <form className="w-full flex flex-col justify-center items-center">
+          <div className="w-full flex flex-col justify-center items-center">
             <div className="w-full p-5 max-w-[400px]">
               <label className="ml-1 font-semibold opacity-80">Email</label>
               <br />
@@ -108,15 +111,25 @@ export const Login = () => {
               />
             </div>
 
-          <div className="flex justify-center items-end w-full">
-            <button onClick={()=>{handleForgotPassword();}} className="text-sm text-blue-500 font-medium -mr-[50%]">Forgot Password?</button>
-
-          </div>
-
+            <div className="flex justify-center items-end w-full">
+              <button
+                onClick={() => {
+                  handleForgotPassword();
+                }}
+                className="text-sm text-blue-500 font-medium -mr-[50%]"
+              >
+                Forgot Password?
+              </button>
+            </div>
 
             <Button
-              type="submit"
-              onClick={(e) => handleLogin(e, email, password, navigate)}
+              onClick={(e) => {
+                if (email == "" || password == "") {
+                  toast.error("Please enter the email and password properly");
+                  return;
+                }
+                handleLogin(e, email, password, navigate);
+              }}
               className="max-w-[300px] my-10"
             >
               Log in
@@ -151,7 +164,7 @@ export const Login = () => {
                 alt="facebook icon"
               />
             </div>
-          </form>
+          </div>
           <p className="mt-10 -mb-10 text-center">
             Don't have an account?{" "}
             <Link

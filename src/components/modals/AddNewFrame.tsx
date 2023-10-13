@@ -23,13 +23,13 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
   const user = useUser();
   const [link, setLink] = useState("");
   const [errorMessages, setErrorMessages] = useState<string>();
-  const [frame, setFrame] = useState<string>();
-  const [name, setName] = useState<string>();
-  const [width, setWidth] = useState<number>();
-  const [height, setHeight] = useState<number>();
+  const [frame, setFrame] = useState<string>("");
+  const [name, setName] = useState<string>("");
+  const [width, setWidth] = useState<number>(500);
+  const [height, setHeight] = useState<number>(500);
   const [yPosition, setYPosition] = useState<number>(0);
   const [xPosition, setXPosition] = useState<number>(0);
-  const [zoom, setZoom] = useState<number>(0);
+  const [zoom, setZoom] = useState<number>(1);
 
   // handlers
   const addNewFrame = async () => {
@@ -86,24 +86,30 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
 
   const handleYScroll = () => {
     const webView = document.getElementById("webview-frame");
-
+    if (!webView) {
+      return;
+    }
     // @ts-ignore
-    webView.executeJavaScript(
-      `window.scrollTo(${xPosition * 100}, ${yPosition * 100});`
-    );
+    webView.executeJavaScript(`window.scrollTo(${xPosition}, ${yPosition});`);
   };
+
   const handleXScroll = () => {
     const webView = document.getElementById("webview-frame");
+    if (!webView) {
+      return;
+    }
+    // @ts-ignore
+    webView.executeJavaScript(`window.scrollTo(${xPosition}, ${yPosition});`);
+  };
+
+  function setZoomFactor(zoom: number) {
+    const webView = document.getElementById("webview-frame");
+    if (!webView) {
+      return;
+    }
 
     // @ts-ignore
-    webView.executeJavaScript(
-      `window.scrollTo(${xPosition * 100}, ${yPosition * 100});`
-    );
-  };
-  function setZoomFactor(zoomFactor) {
-    const webView = document.getElementById("webview-frame");
-    // @ts-ignore
-    webView.setZoomFactor(zoomFactor);
+    webView.setZoomFactor(zoom);
   }
 
   return (
@@ -119,7 +125,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
             <form className="flex gap-x-4">
               <input
                 type="text"
-                className="w-full bg-transparent border border-gray-200 rounded-xl p-3  px-8 shadow-sm"
+                className="w-full bg-transparent border-slate-400 border rounded-xl p-3  px-8 "
                 placeholder="Frame link"
                 value={link}
                 onChange={(e) => {
@@ -129,7 +135,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
               />
               <button
                 type="submit"
-                className="bg-transparent border border-gray-200 rounded-xl p-3  px-8 shadow-sm"
+                className="bg-transparent border-slate-400 border rounded-xl p-3  px-8 "
                 onClick={(e) => {
                   e.preventDefault();
 
@@ -192,8 +198,8 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                     justify-between
                     gap-3
                     border
-                    border-gray-200
-                    shadow-sm
+                  border-slate-400
+                    
                     mb-3
                     "
                 >
@@ -219,11 +225,11 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                       w-full
                       bg-transparent
                       border
-                      border-gray-200
+                    border-slate-400
                       rounded-xl
                       p-3
                       px-8
-                      shadow-sm
+                      
                     "
                   />
                 </div>
@@ -237,8 +243,8 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                     
                     gap-3
                     border
-                    border-gray-200
-                    shadow-sm
+                  border-slate-400
+                    
                     mb-3
                     "
                 >
@@ -271,11 +277,9 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                         accent-[#111]
                         bg-transparent
                         border
-                        border-gray-200
+                      border-slate-400
                         rounded-xl
-                        p-3
-                        px-8
-                        shadow-sm
+                        py-3
                         mr-2
                         "
                       />
@@ -298,11 +302,9 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                         bg-transparent
                         accent-[#111]
                         border
-                        border-gray-200
+                      border-slate-400
                         rounded-xl
-                        p-3
-                        px-8
-                        shadow-sm
+                        py-3
                         mr-2
                         "
                       />
@@ -318,8 +320,8 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                     
                     gap-3
                     border
-                    border-gray-200
-                    shadow-sm
+                  border-slate-400
+                    
                     mb-3
                     "
                 >
@@ -341,8 +343,8 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                         type="range"
                         id="ySlider"
                         min="0"
-                        max="100"
-                        step="1"
+                        max="10000"
+                        step="100"
                         value={yPosition}
                         onChange={(e) => {
                           setYPosition(Number(e.target.value));
@@ -353,11 +355,9 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                         accent-[#111]
                         bg-transparent
                         border
-                        border-gray-200
+                      border-slate-400
                         rounded-xl
-                        p-3
-                        px-8
-                        shadow-sm
+                        py-3
                         mr-2
                         "
                       />
@@ -369,8 +369,8 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                         type="range"
                         id="xSlider"
                         min="0"
-                        max="100"
-                        step="1"
+                        max="10000"
+                        step="100"
                         value={xPosition}
                         onChange={(e) => {
                           setXPosition(Number(e.target.value));
@@ -381,11 +381,9 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                         accent-[#111]
                         bg-transparent
                         border
-                        border-gray-200
+                      border-slate-400
                         rounded-xl
-                        p-3
-                        px-8
-                        shadow-sm
+                        py-3
                         mr-2
                         "
                       />
@@ -401,8 +399,8 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                     
                     gap-3
                     border
-                    border-gray-200
-                    shadow-sm
+                  border-slate-400
+                    
                     mb-3
                     "
                 >
@@ -433,10 +431,10 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                         accent-[#111]
                         bg-transparent
                         border
-                        border-gray-200
+                      border-slate-400
                         rounded-xl
                         py-3
-                        shadow-sm
+                        
                         mr-2
                         "
                     />
@@ -479,13 +477,14 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
               onClick={() => {
                 setOpen(false);
               }}
-              className="bg-transparent border-2 hover:opacity-75"
+              className="bg-transparent border border-slate-400  hover:opacity-75"
             >
               <span className="text-darkgray">cancel</span>
             </Button>
             <Button
               onClick={async () => {
                 await addNewFrame();
+                setOpen(false);
               }}
             >
               <span className="text-white">Create</span>

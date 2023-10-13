@@ -1,13 +1,13 @@
+import { motion } from "framer-motion";
+import { getFirestore } from "firebase/firestore";
 import React, { useEffect } from "react";
-import { IGroup } from "../../types";
-// import { ArrowDown } from "lucide-react";
 import * as FaIcon from "lucide-react";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { Link } from "react-router-dom";
+//
 import UpdateGroup from "../modals/UpdateGroup";
 import GroupMenu from "../DropDowns/GroupMenu";
-import { deleteGroup } from "../../helper/groups";
-import { getFirestore } from "firebase/firestore";
+import { IGroup } from "../../types";
 import { fetchFrames } from "../../helper/frames";
 
 interface IGroupPorps {
@@ -38,29 +38,29 @@ const Group: React.FC<IGroupPorps> = ({
     // eslint-disable-next-line
     []
   );
-
   return (
     <div className="relative w-full ">
       <div
-        className="
+        className={`
         w-full
-        bg-white
         rounded-xl  
         my-2
         flex
         items-center   
         shadow-md
         cursor-pointer
-        text-gray-500
-        hover:text-gray-700
+        text-white
+        hover:text-gray-200
         hover:bg-gray-100
         group
         z-1
         transition
-        duration-700
+        duration-300
         ease-in-out
-
-        "
+        `}
+        style={{
+          backgroundColor: group?.color || "#",
+        }}
       >
         <Link
           to={`/group/${group.id}`}
@@ -72,12 +72,12 @@ const Group: React.FC<IGroupPorps> = ({
           <span
             className={
               `
-          whitespace-nowrap
-          overflow-hidden
-          overflow-ellipsis
-          px-2
-          w-full
-        ` + (arrow ? "w-[60%]" : "")
+              whitespace-nowrap
+              overflow-hidden
+              overflow-ellipsis
+              px-2
+              w-full
+            ` + (arrow ? "w-[60%]" : "")
             }
           >
             {group.name}
@@ -106,7 +106,7 @@ const Group: React.FC<IGroupPorps> = ({
           <div className="flex items-center gap-2 mr-2">
             <BiDotsVerticalRounded
               size={18}
-              className="text-gray-400 group-hover:text-gray-600"
+              className="text-gray-100 group-hover:text-gray-200"
               onClick={() =>
                 setOpen((prev) => {
                   return !prev;
@@ -130,46 +130,50 @@ const Group: React.FC<IGroupPorps> = ({
                 <div className="w-4 h-4 border-2 border-t-2 border-gray-200 rounded-full animate-spin"></div>
               </div>
             )}
-            {frames.map((frame) => (
-              <div
-                key={frame.id}
-                className={`
-              w-full
-              bg-white
-              rounded-xl  
-              flex
-              items-center  
-              cursor-pointer
-              text-gray-500
-              hover:text-gray-700
-              hover:bg-gray-100
-              group
-              z-1
-              ${isFramesOpen ? "opacity-100" : "opacity-0"}
-              transition
-              duration-700
-              ease-in-out
-              ${isFramesOpen ? "h-10" : "h-0"}
-              `}
+            {frames.map((frame, index) => (
+              <motion.div
+                initial="hidden"
+                whileInView="visible"
+                viewport={{ once: true }}
+                transition={{ duration: 0.2, delay: 0.1 * index }}
+                variants={{
+                  visible: { opacity: 1, y: 0 },
+                  hidden: { opacity: 0, y: 20 },
+                }}
               >
-                <FaIcon.Dot />
-                <Link
-                  to={`/group/${group.id}/${"#"}${frame.id}`}
-                  className="flex items-center w-full p-1 mr-2"
+                <div
+                  key={frame.id}
+                  className={`
+                w-full
+                bg-white
+                rounded-xl  
+                flex
+                items-center  
+                cursor-pointer
+                text-gray-500
+                hover:text-gray-700
+                hover:bg-gray-100
+                `}
                 >
-                  <span
-                    className={`
-          whitespace-nowrap
-          overflow-hidden
-          overflow-ellipsis
-          px-2
-          w-full
-        `}
+                  <FaIcon.Dot />
+                  <Link
+                    to={`/group/${group.id}/${"#"}${frame.id}`}
+                    className="flex items-center w-full p-1 mr-2"
                   >
-                    {frame.name}
-                  </span>
-                </Link>
-              </div>
+                    <span
+                      className={`
+                    whitespace-nowrap
+                    overflow-hidden
+                    overflow-ellipsis
+                    px-2
+                    w-full
+                  `}
+                    >
+                      {frame.name}
+                    </span>
+                  </Link>
+                </div>
+              </motion.div>
             ))}
           </div>
         )}
@@ -177,17 +181,17 @@ const Group: React.FC<IGroupPorps> = ({
       {open && (
         <div
           className="
-        absolute
-        top-10
-        right-0
-        bg-white
-        "
+            absolute
+            top-10
+            right-0
+            bg-white
+            "
         >
           <GroupMenu
             open={open}
             setOpen={setOpen}
-            deleteGroup={deleteGroup(db, group.id)}
             setIsUpdateGroupOpen={setIsUpdateGroupOpen}
+            group={group}
           />
         </div>
       )}

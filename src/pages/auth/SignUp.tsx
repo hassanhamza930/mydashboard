@@ -8,12 +8,12 @@ import dashboardScreens from "../../assets/images/signupImg.png";
 import logo from "../../assets/images/logo.png";
 import googleIcon from "../../assets/icons/google.png";
 import microsoftIcon from "../../assets/images/microsoft.png";
-
-// import facebookIcon from "../../assets/icons/facebook.png";
+import facebookIcon from "../../assets/icons/facebook.png";
+//
 import {
   // SignInWithFacebook,
   // SignInWithGoogle,
-  // handleFacebookSignIn,
+  handleFacebookSignIn,
   handleGoogleSignIn,
   handleMicrosoftSignIn,
   handleSignUp,
@@ -125,13 +125,13 @@ export const SignUp = () => {
                 width={35}
                 alt="google icon"
               />
-              {/* <img
+              <img
                 src={facebookIcon}
                 className="cursor-pointer"
                 onClick={() => handleFacebookSignIn(ipcRenderer)}
                 width={35}
                 alt="facebook icon"
-              /> */}
+              />
               <img
                 src={microsoftIcon}
                 className="cursor-pointer"

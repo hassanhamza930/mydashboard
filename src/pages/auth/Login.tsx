@@ -4,13 +4,14 @@ import { Link, useNavigate } from "react-router-dom";
 import dashboardScreens from "../../assets/images/dashboardScreens.png";
 import logo from "../../assets/images/logo.png";
 import googleIcon from "../../assets/icons/google.png";
+import facebookIcon from "../../assets/icons/facebook.png";
 import microsoftIcon from "../../assets/images/microsoft.png";
 //
 import Button from "../../components/ui/Button";
 import Input from "../../components/ui/Input";
 import {
   handleGoogleSignIn,
-  // handleFacebookSignIn,
+  handleFacebookSignIn,
   handleLogin,
   // SignInWithGoogle,
   // SignInWithFacebook,
@@ -149,13 +150,13 @@ export const Login = () => {
                 width={35}
                 alt="google icon"
               />
-              {/* <img
+              <img
                 src={facebookIcon}
                 className="cursor-pointer"
-                onClick={() => handleMicrosoftSignIn(ipcRenderer)}
+                onClick={() => handleFacebookSignIn(ipcRenderer)}
                 width={35}
                 alt="facebook icon"
-              /> */}
+              />
               <img
                 src={microsoftIcon}
                 className="cursor-pointer"

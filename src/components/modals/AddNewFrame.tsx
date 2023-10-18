@@ -192,7 +192,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                     w-full
                     bg-white
                     rounded-xl
-                    p-3
+                    p-1
                     flex
                     items-center
                     justify-between
@@ -203,16 +203,6 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                     mb-3
                     "
                 >
-                  <label
-                    htmlFor="name"
-                    className="
-                    text-gray-600
-                    text-md
-                    
-                    "
-                  >
-                    Name
-                  </label>
                   <input
                     type="text"
                     id="name"
@@ -220,12 +210,11 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                     onChange={(e) => {
                       setName(e.target.value);
                     }}
-                    placeholder="Frame name"
+                    placeholder="Frame Name"
                     className="
                       w-full
                       bg-transparent
-                      border
-                    border-slate-400
+                      
                       rounded-xl
                       p-3
                       px-8
@@ -344,7 +333,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                         id="ySlider"
                         min="0"
                         max="10000"
-                        step="100"
+                        step="1"
                         value={yPosition}
                         onChange={(e) => {
                           setYPosition(Number(e.target.value));
@@ -370,7 +359,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                         id="xSlider"
                         min="0"
                         max="10000"
-                        step="100"
+                        step="1"
                         value={xPosition}
                         onChange={(e) => {
                           setXPosition(Number(e.target.value));
@@ -445,31 +434,38 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
 
             {/* frame */}
             <div
+              className=" h-[70vh]  overflow-y-auto "
               style={{
                 width: `${width}px`,
-                height: `${height}px`,
               }}
-              className={`
+            >
+              <div
+                style={{
+                  width: `100%`,
+                  height: `${height}px`,
+                }}
+                className={`
               rounded-xl
               p-3
               relative
               `}
-            >
-              {frame ? (
-                <webview
-                  id="webview-frame"
-                  src={frame}
-                  className="
+              >
+                {frame ? (
+                  <webview
+                    id="webview-frame"
+                    src={frame}
+                    className="
                 w-full
                 bg-slate-200
                 rounded-xl
                 p-3
                 h-full
                 "
-                />
-              ) : (
-                <p className="text-gray-400 text-sm">"No frame selected"</p>
-              )}
+                  />
+                ) : (
+                  <p className="text-gray-400 text-sm">"No frame selected"</p>
+                )}
+              </div>
             </div>
           </div>
           <div className="flex justify-between items-center gap-x-3">

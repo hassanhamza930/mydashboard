@@ -18,11 +18,18 @@ interface Props {
   setOpen: (arg: boolean) => void;
 }
 
-const colors = [
-  { id: 1, name: "Light Blue", hex: "#87CEFA" },
-  { id: 2, name: "Pale Green", hex: "#98FB98" },
-  { id: 3, name: "Lavender", hex: "#E6E6FA" },
-  { id: 4, name: "Silver", hex: "#111" },
+export const colors = [
+  { id: 1, hex: "#87CEEB" },
+  { id: 2, hex: "#E6E6FA" },
+  { id: 3, hex: "#98FB98" },
+  { id: 4, hex: "#DAA520" },
+  { id: 5, hex: "#DC143C" },
+  { id: 6, hex: "#708090" },
+  { id: 7, hex: "#FF6347" },
+  { id: 8, hex: "#800080" },
+  { id: 9, hex: "#008080" },
+  { id: 10, hex: "#D2691E" },
+  { id: 11, hex: "#3e3e3e" },
 ];
 
 const AddNewGroup: React.FC<Props> = ({ open, setOpen }) => {
@@ -96,7 +103,7 @@ const AddNewGroup: React.FC<Props> = ({ open, setOpen }) => {
               <IconSelected />
             </div>
           </div>
-          <div className="flex justify-evenly items-center gap-3">
+          <div className="flex justify-start flex-wrap items-center gap-3 my-3">
             {colors.map((color) => (
               <ColorSelection
                 selectedColor={selectedColor}

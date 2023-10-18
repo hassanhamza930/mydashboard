@@ -103,9 +103,9 @@ const Group: React.FC<IGroupPorps> = ({
           </span>
         )}
         {options && (
-          <div className="flex items-center gap-2 mr-2">
+          <div className="flex items-center gap-2 mr-3">
             <BiDotsVerticalRounded
-              size={18}
+              size={22}
               className="text-gray-100 group-hover:text-gray-200"
               onClick={() =>
                 setOpen((prev) => {

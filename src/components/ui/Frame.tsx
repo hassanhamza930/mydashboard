@@ -116,7 +116,8 @@ const Frame: React.FC<Props> = ({ frame }) => {
         absolute
         top-1
         text-sm
-        font-medium
+        font-semibold
+        uppercase
         text-gray-600
         my-1
         mx-3
@@ -139,7 +140,7 @@ const Frame: React.FC<Props> = ({ frame }) => {
       >
         <BiDotsVerticalRounded
           size={18}
-          className="text-gray-400 group-hover:text-gray-600"
+          className="text-gray-600 group-hover:text-gray-800"
           onClick={() => {
             setOpen((prev) => !prev);
           }}

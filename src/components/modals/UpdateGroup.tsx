@@ -8,6 +8,7 @@ import Button from "../ui/Button";
 import { firebaseApp } from "../../config/firebase";
 import { IGroup } from "../../types";
 import ColorSelection from "../ui/ColorSelection";
+import { colors } from "./AddNewGroup";
 
 interface Props {
   open: boolean;
@@ -15,13 +16,6 @@ interface Props {
   setOpen: (arg: boolean) => void;
   group: IGroup;
 }
-
-const colors = [
-  { id: 1, name: "Light Blue", hex: "#87CEFA" },
-  { id: 2, name: "Pale Green", hex: "#98FB98" },
-  { id: 3, name: "Lavender", hex: "#E6E6FA" },
-  { id: 4, name: "Silver", hex: "#111" },
-];
 
 const UpdateGroup: React.FC<Props> = ({ open, setOpen, group }) => {
   const db = getFirestore(firebaseApp);
@@ -81,7 +75,7 @@ const UpdateGroup: React.FC<Props> = ({ open, setOpen, group }) => {
               <IconSelected />
             </div>
           </div>{" "}
-          <div className="flex justify-evenly items-center gap-3">
+          <div className="flex justify-start flex-wrap items-center gap-3 my-3">
             {colors.map((color) => (
               <ColorSelection
                 selectedColor={selectedColor}

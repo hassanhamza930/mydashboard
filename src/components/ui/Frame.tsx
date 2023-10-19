@@ -37,28 +37,43 @@ const Frame: React.FC<Props> = ({ frame }) => {
     }
   };
 
-  const setZoomFactor = (zoomFactor: number) => {
-    handleWebViewAction((webView) => {
-      // @ts-ignore
-      webView.setZoomFactor(zoomFactor);
-    });
-  };
-
-  const handleXScroll = () => {
-    handleWebViewAction((webView) => {
-      // @ts-ignore
-      webView.executeJavaScript(`window.scrollTo(${frame.xPosition}, 0)`);
-    });
-  };
-
-  const handleYScroll = () => {
-    handleWebViewAction((webView) => {
-      // @ts-ignore
-      webView.executeJavaScript(`window.scrollTo(0, ${frame.yPosition})`);
-    });
-  };
-
   useEffect(() => {
+    const setZoomFactor = (zoomFactor: number) => {
+      handleWebViewAction((webView) => {
+        // @ts-ignore
+        webView.setZoomFactor(zoomFactor);
+      });
+    };
+
+    const handleXScroll = () => {
+      handleWebViewAction((webView) => {
+        // @ts-ignore
+        webView.executeJavaScript(`window.scrollTo(${frame.xPosition}, 0)`);
+      });
+    };
+
+    const handleYScroll = () => {
+      handleWebViewAction((webView) => {
+        // @ts-ignore
+        webView.executeJavaScript(`window.scrollTo(0, ${frame.yPosition})`);
+      });
+    };
+
+    const getScroll = () => {
+      handleWebViewAction((webView) => {
+        // @ts-ignore
+        webView
+          .executeJavaScript(`window.scrollY`)
+          .then((yPosition: number) => {
+            // @ts-ignore
+            webView
+              .executeJavaScript(`window.scrollX`)
+              .then((xPosition: number) => {
+                console.log("xPosition", xPosition, "yPosition", yPosition);
+              });
+          });
+      });
+    };
     if (frame.zoom) {
       setZoomFactor(frame.zoom);
     }
@@ -68,7 +83,12 @@ const Frame: React.FC<Props> = ({ frame }) => {
     if (frame.yPosition) {
       handleYScroll();
     }
-  }, [frame]);
+    getScroll();
+
+    // return () => {
+    //   clearInterval(interval);
+    // };
+  }, [frame.zoom, frame.xPosition, frame.yPosition]);
 
   useEffect(() => {
     const updateFrame = async () => {

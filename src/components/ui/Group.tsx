@@ -132,6 +132,7 @@ const Group: React.FC<IGroupPorps> = ({
             )}
             {frames.map((frame, index) => (
               <motion.div
+                key={frame.id}
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true }}
@@ -142,7 +143,6 @@ const Group: React.FC<IGroupPorps> = ({
                 }}
               >
                 <div
-                  key={frame.id}
                   className={`
                 w-full
                 bg-white

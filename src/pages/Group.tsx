@@ -111,10 +111,10 @@ export const Group = () => {
               initial="hidden"
               whileInView="visible"
               viewport={{ once: true }}
-              transition={{ duration: 0.3, delay: 0.1 * index }}
+              transition={{ duration: 1.2, delay: 0.1 * index }}
               variants={{
                 visible: { opacity: 1, y: 0 },
-                hidden: { opacity: 0, y: 20 },
+                hidden: { opacity: 0, y: 10 },
               }}
               key={frame.id}
             >
@@ -123,7 +123,6 @@ export const Group = () => {
               </div>
             </motion.div>
           ))}
-          {/* <webview src="https://www.google.com" /> */}
         </div>
       )}
       <AddNewFrame groupId={id} open={open} setOpen={setOpen} />

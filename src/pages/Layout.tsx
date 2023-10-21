@@ -4,16 +4,14 @@ import Header from "../components/Header";
 
 export const Layout = () => {
   return (
-    <main className=" w-full max-h-full min-h-[100vh] bg-white">
+    <main className=" w-full h-screen overflow-y-hidden bg-white">
       <Header />
-      <div className="flex max-h-full min-h-[100vh]">
+      <div className="flex h-full pb-24">
         <Sidebar />
 
-        <div className="overflow-auto min-h-full relative bg-white  w-full rounded-ss-xl p-10 py-6 border-t border-l border-slate-400 ">
+        <div className="h-full relative overflow-y-scroll bg-white  w-full rounded-ss-xl p-10 py-6 border-t border-l border-slate-400 ">
           {/* Dashboard */}
-
           <Outlet />
-
           {/* Dashboard */}
         </div>
       </div>

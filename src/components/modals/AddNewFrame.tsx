@@ -183,6 +183,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
               h-[70vh]
               rounded-xl
               p-3
+              flex-none  
               "
             >
               <div>

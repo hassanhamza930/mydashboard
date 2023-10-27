@@ -15,6 +15,9 @@ const Frame: React.FC<Props> = ({ frame }) => {
   const [updateFrameOpen, setUpdateFrameOpen] = useState(false);
   const resizeDiv = useRef<HTMLDivElement | null>(null);
   const db = getFirestore();
+  const [dragging, setDragging] = useState(false);
+  const [menu, setMenu] = useState(false);
+
 
   const deleteFrame = async () => {
     try {
@@ -88,7 +91,7 @@ const Frame: React.FC<Props> = ({ frame }) => {
     // return () => {
     //   clearInterval(interval);
     // };
-  }, [frame.zoom, frame.xPosition, frame.yPosition]);
+  }, [frame.zoom, frame.xPosition, frame.yPosition, dragging]);
 
   useEffect(() => {
     const updateFrame = async () => {
@@ -114,6 +117,8 @@ const Frame: React.FC<Props> = ({ frame }) => {
   return (
     <div
       id="resizableDiv"
+      onMouseDown={() => { console.log("dragging"); setDragging(true); }}
+      onMouseUp={() => { console.log("dragging done"); setDragging(false); }}
       className="
         p-1
         rounded-xl
@@ -132,8 +137,11 @@ const Frame: React.FC<Props> = ({ frame }) => {
       }}
     >
       <div
+        onMouseEnter={() => {console.log("over menu");setMenu(true); }}
+        onMouseLeave={() => {console.log("out of menu"); setMenu(false); }}
         className="
         absolute
+         z-10
         top-1
         text-sm
         font-semibold
@@ -146,9 +154,12 @@ const Frame: React.FC<Props> = ({ frame }) => {
         {frame?.name}
       </div>
       <div
+          onMouseEnter={() => {console.log("over menu");setMenu(true); }}
+          onMouseLeave={() => {console.log("out of menu"); setMenu(false); }}
         className="
           absolute
           top-1
+          z-10
           right-1
           text-sm
           font-medium
@@ -173,18 +184,29 @@ const Frame: React.FC<Props> = ({ frame }) => {
         />
       </div>
 
-      <webview
-        src={frame?.link}
-        id="webview-frame-main"
-        className="
-            h-full
-            w-full
-            resize-both
-            overflow-auto
-            rounded-xl
-            shadow-md
-          "
-      />
+      <div 
+      
+      className="h-full w-full">
+        {menu==false && dragging == true ?
+          <div className="bg-gray h-full w-full text-black/90 flex justify-center items-center text-md flex-col gap-5">
+              Resizing
+              <div className="h-10 w-10 bg-black/90 animate-spin"></div>
+          </div>
+          :
+          <webview
+            src={frame?.link}
+            id="webview-frame-main"
+            className="
+          h-full
+          w-full
+          resize-both
+          overflow-auto
+          rounded-xl
+          shadow-md
+        "
+          />
+        }
+      </div>
 
       <UpdateFrame
         open={updateFrameOpen}

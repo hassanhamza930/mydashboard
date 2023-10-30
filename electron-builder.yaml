@@ -1,0 +1,32 @@
+directories:
+  output: release
+appId: "eu.agilesoftwaredesign.mydashboard"
+# asarUnpack: '**/resources/some-native-binary'
+productName: MyDashboard
+
+
+files:
+  - dist-electron
+  - from: dist-electron/
+    to: "."
+    filter: main.js
+  # - resources/
+  - index.html
+  - embedded.provisionprofile
+  
+mac:
+  hardenedRuntime: true
+  gatekeeperAssess: true  
+  category: public.app-category.productivity
+  entitlements: build/entitlements.mac.plist
+  # icon: resources/app.icns
+  target:
+    # - pkg
+    # - dmg
+    - zip
+#     - mas
+# mas:
+#   type: distribution
+#   category: public.app-category.productivity
+#   entitlements: build/entitlements.mas.plist
+#   icon: resources/app.icns

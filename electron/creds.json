@@ -1,0 +1,11 @@
+{
+  "installed": {
+    "client_id": "539580232204-b1630o2p9l3co55ljvv74445sbalj3mr.apps.googleusercontent.com",
+    "project_id": "the-dashboard-398414",
+    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+    "token_uri": "https://oauth2.googleapis.com/token",
+    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+    "client_secret": "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",
+    "redirect_uris": ["http://localhost"]
+  }
+}

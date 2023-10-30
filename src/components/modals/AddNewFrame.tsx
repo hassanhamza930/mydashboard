@@ -121,7 +121,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
           </DialogTitle>
         </DialogHeader>
         <div className="">
-          <div className="w-full">
+          <div className="w-2/4">
             <form className="flex gap-x-4">
               <input
                 type="text"
@@ -130,6 +130,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                 value={link}
                 onChange={(e) => {
                   setErrorMessages("");
+                  setFrame(`${link}`);
                   setLink(e.target.value);
                 }}
               />
@@ -469,16 +470,17 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
               </div>
             </div>
           </div>
-          <div className="flex justify-between items-center gap-x-3">
+          <div className="flex gap-x-3 w-full flex-row justify-end items-end">
             <Button
               onClick={() => {
                 setOpen(false);
               }}
-              className="bg-transparent border border-slate-400  hover:opacity-75"
+              className="bg-transparent border border-slate-400  hover:opacity-75 w-36"
             >
-              <span className="text-darkgray">cancel</span>
+              <span className="text-darkgray">Cancel</span>
             </Button>
             <Button
+            className="w-36"
               onClick={async () => {
                 await addNewFrame();
                 setOpen(false);

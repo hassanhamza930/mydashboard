@@ -12,12 +12,12 @@ module.exports = {
   rebuildConfig: {},
   makers: [
 
-    {
-      name: '@electron-forge/maker-pkg',
-      config: {
-        keychain: 'my-secret-ci-keychain'
-      }
-    },
+    // {
+    //   name: '@electron-forge/maker-pkg',
+    //   config: {
+    //     keychain: 'my-secret-ci-keychain'
+    //   }
+    // },
 
     {
       name: '@electron-forge/maker-squirrel',

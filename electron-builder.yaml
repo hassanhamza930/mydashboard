@@ -21,10 +21,21 @@ mac:
   entitlements: build/entitlements.mac.plist
   # icon: resources/app.icns
   target:
-    # - pkg
-    # - dmg
-    - zip
-#     - mas
+    - target: zip
+      arch:
+        - x64
+        - arm64
+
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+
+#    # - dmg
+#    - zip
+##     - mas
+
+
 # mas:
 #   type: distribution
 #   category: public.app-category.productivity

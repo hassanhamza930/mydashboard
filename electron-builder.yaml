@@ -10,6 +10,7 @@ files:
   - from: dist-electron/
     to: "."
     filter: main.js
+  - dist
   # - resources/
   - index.html
   - embedded.provisionprofile

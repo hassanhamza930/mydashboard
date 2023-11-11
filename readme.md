@@ -45,7 +45,7 @@ https://developer.apple.com/documentation/security/notarizing_macos_software_bef
 </details>
 
 ```cmd
-xcrun altool --notarize-app -f MyDashboard-0.0.0.dmg   --primary-bundle-id eu.agilesoftwaredesign.mydashboard -u b.banjac@asd.email -p bqqu-vcht-kqxk-cbtk
+xcrun altool --notarize-app -f release/MyDashboard-0.0.0.dmg   --primary-bundle-id eu.agilesoftwaredesign.mydashboard -u b.banjac@asd.email -p bqqu-vcht-kqxk-cbtk
 
 ```
 
@@ -104,9 +104,12 @@ Status Message: Package Approved
 
 
 ```cmd
-xcrun stapler staple  MyDashboard-0.0.0.dmg
+xcrun stapler staple  release/MyDashboard-0.0.0.dmg
 ```
-
+Local test
+```cmd
+npx electron-builder --dir --config electron-builder.yaml
+```
 <details>
 
 <summary>staple and validate action </summary>

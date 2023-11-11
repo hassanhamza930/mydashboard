@@ -20,6 +20,7 @@ mac:
   gatekeeperAssess: true  
   category: public.app-category.productivity
   entitlements: build/entitlements.mac.plist
+  identity: 'Agile Software Design GmbH (3JK72P98Z7)'
   # icon: resources/app.icns
   target:
     - target: zip

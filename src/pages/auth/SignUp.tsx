@@ -25,6 +25,7 @@ export const SignUp = () => {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const ipcRenderer = useIpcRenderer();
@@ -105,8 +106,13 @@ export const SignUp = () => {
             </div>
 
             <Button
-              onClick={(e) => handleSignUp(e, name, email, password, navigate)}
+              onClick={async (e) => {
+                setLoading(true);
+                await handleSignUp(e, name, email, password, navigate);
+                setLoading(false);
+              }}
               className="max-w-[300px] my-10"
+              loading={loading}
             >
               Sign Up
             </Button>

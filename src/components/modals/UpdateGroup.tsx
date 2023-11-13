@@ -28,6 +28,12 @@ const UpdateGroup: React.FC<Props> = ({ open, setOpen, group }) => {
   const updateGroup = async () => {
     const docRef = doc(db, "groups", group.id);
 
+    if (name?.trim() === "") {
+      toast.error("Name cannot be empty...");
+      return;
+    }
+    setOpen(false);
+
     await updateDoc(docRef, {
       name: name,
       icon: selectedIcon,
@@ -98,7 +104,6 @@ const UpdateGroup: React.FC<Props> = ({ open, setOpen, group }) => {
           <Button
             onClick={() => {
               updateGroup();
-              setOpen(false);
             }}
           >
             <span className="text-white">update</span>

@@ -19,9 +19,6 @@ interface Props {
 }
 
 export const colors = [
-  { id: 1, hex: "#87CEEB" },
-  { id: 2, hex: "#E6E6FA" },
-  { id: 3, hex: "#98FB98" },
   { id: 4, hex: "#DAA520" },
   { id: 5, hex: "#DC143C" },
   { id: 6, hex: "#708090" },
@@ -46,6 +43,12 @@ const AddNewGroup: React.FC<Props> = ({ open, setOpen }) => {
   const addNewGroup = async () => {
     const id = uuid();
     const docRef = doc(db, "groups", id); // Use the generated ID as the document ID
+
+    if (name?.trim() === "") {
+      toast.error("Name cannot be empty...");
+      return;
+    }
+    setOpen(false);
 
     await setDoc(
       docRef,
@@ -126,7 +129,6 @@ const AddNewGroup: React.FC<Props> = ({ open, setOpen }) => {
           <Button
             onClick={() => {
               addNewGroup();
-              setOpen(false);
             }}
           >
             <span className="text-white">Create</span>

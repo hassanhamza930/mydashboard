@@ -22,11 +22,16 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
   const db = getFirestore(firebaseApp);
   const user = useUser();
   const [link, setLink] = useState("");
-  const [errorMessages, setErrorMessages] = useState<string>();
+  const [errorMessages, setErrorMessages] = useState<{
+    type: "LINK" | "NAME" | "";
+    message: string;
+  }>({
+    type: "",
+    message: "",
+  });
   const [frame, setFrame] = useState<string>("");
   const [name, setName] = useState<string>("");
-  const [width, setWidth] = useState<number>(500);
-  const [height, setHeight] = useState<number>(500);
+  const [loading, setLoading] = useState<boolean>(false);
   const [yPosition, setYPosition] = useState<number>(0);
   const [xPosition, setXPosition] = useState<number>(0);
   const [zoom, setZoom] = useState<number>(1);
@@ -34,26 +39,29 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
   // handlers
   const addNewFrame = async () => {
     if (link === "") {
-      setErrorMessages("Link is required");
+      setErrorMessages({
+        type: "LINK",
+        message: "Link is required",
+      });
       return;
     }
     if (validator.isURL(link) === false) {
-      setErrorMessages("Link is not valid url format eg: https://example.com");
+      setErrorMessages({
+        type: "LINK",
+        message: "Link is not valid url format eg: https://example.com",
+      });
       return;
     }
 
     if (name === "") {
-      setErrorMessages("Name is required");
+      setErrorMessages({
+        type: "NAME",
+        message: "Name is required",
+      });
       return;
     }
-    if (width === 0) {
-      setErrorMessages("Width is required");
-      return;
-    }
-    if (height === 0) {
-      setErrorMessages("Height is required");
-      return;
-    }
+
+    setOpen(false);
 
     const id = uuid();
 
@@ -64,8 +72,8 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
         groupId: groupId,
         link: frame,
         name,
-        width,
-        height,
+        width: 500,
+        height: 500,
         yPosition,
         xPosition,
         zoom,
@@ -114,7 +122,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="bg-white min-w-[90vw] max-w-[90vw] h-[90vh]">
+      <DialogContent className="bg-white min-w-[60vw] max-w-[90vw] h-[80vh]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-left">
             New Frame
@@ -129,7 +137,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                 placeholder="Frame link"
                 value={link}
                 onChange={(e) => {
-                  setErrorMessages("");
+                  setErrorMessages({ type: "", message: "" });
                   setLink(e.target.value);
                 }}
               />
@@ -139,15 +147,21 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                 onClick={(e) => {
                   e.preventDefault();
 
-                  setErrorMessages("");
+                  setErrorMessages({ type: "", message: "" });
+
                   if (link === "") {
-                    setErrorMessages("Link is required");
+                    setErrorMessages({
+                      type: "LINK",
+                      message: "Link is required",
+                    });
                     return;
                   }
                   if (validator.isURL(link) === false) {
-                    setErrorMessages(
-                      "Link is not valid url format eg: https://example.com"
-                    );
+                    setErrorMessages({
+                      type: "LINK",
+                      message:
+                        "Link is not valid url format eg: https://example.com",
+                    });
                     return;
                   }
                   if (link.startsWith("https://") === false) {
@@ -160,8 +174,8 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                 <FaSearch className="text-gray-400" />
               </button>
             </form>
-            {errorMessages && (
-              <p className="text-red-500 text-xs">{errorMessages}</p>
+            {errorMessages.type === "LINK" && (
+              <p className="text-red-500 text-xs">{errorMessages.message}</p>
             )}
           </div>
           <hr className="my-4" />
@@ -180,7 +194,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
               className="
               w-1/2
               overflow-y-auto
-              h-[70vh]
+              h-[50vh]
               rounded-xl
               p-3
               flex-none  
@@ -200,8 +214,6 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                     gap-3
                     border
                   border-slate-400
-                    
-                    mb-3
                     "
                 >
                   <input
@@ -209,32 +221,40 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                     id="name"
                     value={name}
                     onChange={(e) => {
+                      if (errorMessages.type === "NAME" && name.trim() !== "") {
+                        setErrorMessages({
+                          type: "",
+                          message: "",
+                        });
+                      }
                       setName(e.target.value);
                     }}
                     placeholder="Frame Name"
                     className="
                       w-full
                       bg-transparent
-                      
                       rounded-xl
                       p-3
                       px-8
                       
                     "
-                  />
-                </div>
+                  />{" "}
+                </div>{" "}
+                {errorMessages.type === "NAME" && (
+                  <p className="text-red-500 text-xs ">
+                    {errorMessages.message}
+                  </p>
+                )}
                 {/* name - end */}
-                <div
+                {/* <div
                   className="
                     w-full
                     bg-white
                     rounded-xl
                     p-3
-                    
                     gap-3
                     border
                   border-slate-400
-                    
                     mb-3
                     "
                 >
@@ -300,7 +320,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                       />
                     </div>
                   </div>
-                </div>
+                </div> */}
                 <div
                   className="
                     w-full
@@ -312,7 +332,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                     border
                   border-slate-400
                     
-                    mb-3
+                    my-3
                     "
                 >
                   <label
@@ -434,16 +454,11 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
             </div>
 
             {/* frame */}
-            <div
-              className=" h-[70vh]  overflow-y-auto "
-              style={{
-                width: `${width}px`,
-              }}
-            >
+            <div className=" overflow-y-auto w-full">
               <div
                 style={{
                   width: `100%`,
-                  height: `${height}px`,
+                  height: `50vh`,
                 }}
                 className={`
               rounded-xl
@@ -456,6 +471,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
                     id="webview-frame"
                     src={frame}
                     className="
+
                 w-full
                 bg-slate-200
                 rounded-xl
@@ -479,9 +495,11 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
               <span className="text-darkgray">cancel</span>
             </Button>
             <Button
+              loading={loading}
               onClick={async () => {
+                setLoading(true);
                 await addNewFrame();
-                setOpen(false);
+                setLoading(false);
               }}
             >
               <span className="text-white">Create</span>

@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "tsc && vite build && vite --host",
     "build": "tsc && vite build && electron-builder",
+    "localbuild": "tsc && vite build && npx electron-builder --dir --config=electron-builder.yaml",
     "buildWindows": "tsc && vite build && electron-builder",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",

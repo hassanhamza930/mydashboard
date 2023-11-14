@@ -46,8 +46,8 @@ const Group: React.FC<IGroupPorps> = ({
         where("groupId", "==", groupId)
       );
 
-      onSnapshot(framesQuery, async (snapshot) => {
-        const frames = await snapshot.docs.map((doc) => doc.data() as any);
+      onSnapshot(framesQuery, (snapshot) => {
+        const frames = snapshot.docs.map((doc) => doc.data() as any);
         setFrames(frames);
         setLoading(false);
       });

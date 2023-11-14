@@ -36,7 +36,7 @@ const AddNewGroup: React.FC<Props> = ({ open, setOpen }) => {
   const [selectedIcon, setSelectedIcon] = useState<string>("AccessibilityIcon");
   const [isIconSelectorOpen, setIsIconSelectorOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const [IconSelected] = [lucidIcon[selectedIcon]];
 
   // handlers
@@ -127,8 +127,11 @@ const AddNewGroup: React.FC<Props> = ({ open, setOpen }) => {
             <span className="text-darkgray">cancel</span>
           </Button>
           <Button
-            onClick={() => {
-              addNewGroup();
+            loading={loading}
+            onClick={async () => {
+              setLoading(true);
+              await addNewGroup();
+              setLoading(false);
             }}
           >
             <span className="text-white">Create</span>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { doc, getFirestore, setDoc } from "firebase/firestore";
 import validator from "validator";
@@ -64,6 +64,13 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
     const id = frameData.id;
     const docRef = doc(db, "frames", id);
 
+    console.log({
+      name,
+      yPosition,
+      xPosition,
+      zoom,
+    });
+
     await setDoc(
       docRef,
       {
@@ -89,37 +96,51 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
     setOpen(false);
   };
 
-  const handleYScroll = () => {
-    const webView = document.getElementById("webview-frame-update");
+  const handleYScroll = useCallback(() => {
+    const webView = document.getElementById(
+      `webview-frame-update ${frameData.id}`
+    );
     if (!webView) return;
     // @ts-ignore
     webView.executeJavaScript(`window.scrollTo(${xPosition}, ${yPosition})`);
-  };
+  }, [xPosition, yPosition, frameData]);
 
-  const handleXScroll = () => {
-    const webView = document.getElementById("webview-frame-update");
+  const handleXScroll = useCallback(() => {
+    const webView = document.getElementById(
+      `webview-frame-update ${frameData.id}`
+    );
+
+    console.log("2");
     if (!webView) return;
+    console.log("3");
     // @ts-ignore
     webView.executeJavaScript(`window.scrollTo(${xPosition}, ${yPosition})`);
-  };
+  }, [xPosition, yPosition, frameData]);
 
-  function setZoomFactor(zoomFactor) {
-    const webView = document.getElementById("webview-frame-update");
-    console.log("run0");
+  const setZoomFactor = useCallback(
+    (zoomFactor: number) => {
+      const webView = document.getElementById(
+        `webview-frame-update ${frameData.id}`
+      );
 
-    if (!webView) return;
-    console.log("run1");
-    // @ts-ignore
-    webView.setZoomFactor(zoomFactor);
-  }
+      if (!webView) return;
+      // @ts-ignore
+      webView.setZoomFactor(zoomFactor);
+    },
+    [frameData]
+  );
 
   useEffect(() => {
-    if (frameData?.zoom) {
-      setZoomFactor(zoom);
-      handleXScroll();
-      handleYScroll();
-    }
-  }, [frameData]);
+    setZoomFactor(zoom);
+    handleXScroll();
+    handleYScroll();
+  }, [frameData, handleXScroll, handleYScroll, zoom, setZoomFactor]);
+
+  useEffect(() => {
+    setZoomFactor(zoom);
+    handleXScroll();
+    handleYScroll();
+  }, [yPosition, xPosition, zoom]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -413,7 +434,7 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
               >
                 {frame ? (
                   <webview
-                    id="webview-frame-update"
+                    id={`webview-frame-update ${frameData.id}`}
                     src={frame}
                     className="
 

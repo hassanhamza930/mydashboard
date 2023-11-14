@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useId, useRef, useState } from "react";
 import { BiDotsVerticalRounded } from "react-icons/bi";
 import { IFrame } from "../../types";
 import { deleteDoc, doc, getFirestore, updateDoc } from "firebase/firestore";
@@ -17,7 +17,7 @@ const Frame: React.FC<Props> = ({ frame }) => {
   const db = getFirestore();
   const [dragging, setDragging] = useState(false);
   const [menu, setMenu] = useState(false);
-
+  const id = useId();
 
   const deleteFrame = async () => {
     try {
@@ -31,14 +31,17 @@ const Frame: React.FC<Props> = ({ frame }) => {
   };
 
   // eslint-disable-next-line
-  const handleWebViewAction = (action: (webView: any) => void) => {
-    const webView = document.getElementById("webview-frame-main") as any;
-    if (webView) {
-      webView.addEventListener("dom-ready", () => {
-        action(webView);
-      });
-    }
-  };
+  const handleWebViewAction = useCallback(
+    (action: any) => {
+      const webView = document.getElementById(`${id}`) as any;
+      if (webView) {
+        webView.addEventListener("dom-ready", () => {
+          action(webView);
+        });
+      }
+    },
+    [id]
+  );
 
   useEffect(() => {
     const setZoomFactor = (zoomFactor: number) => {
@@ -91,7 +94,13 @@ const Frame: React.FC<Props> = ({ frame }) => {
     // return () => {
     //   clearInterval(interval);
     // };
-  }, [frame.zoom, frame.xPosition, frame.yPosition, dragging]);
+  }, [
+    frame.zoom,
+    frame.xPosition,
+    frame.yPosition,
+    dragging,
+    handleWebViewAction,
+  ]);
 
   useEffect(() => {
     const updateFrame = async () => {
@@ -117,8 +126,14 @@ const Frame: React.FC<Props> = ({ frame }) => {
   return (
     <div
       id="resizableDiv"
-      onMouseDown={() => { console.log("dragging"); setDragging(true); }}
-      onMouseUp={() => { console.log("dragging done"); setDragging(false); }}
+      onMouseDown={() => {
+        console.log("dragging");
+        setDragging(true);
+      }}
+      onMouseUp={() => {
+        console.log("dragging done");
+        setDragging(false);
+      }}
       className="
         p-1
         rounded-xl
@@ -137,8 +152,14 @@ const Frame: React.FC<Props> = ({ frame }) => {
       }}
     >
       <div
-        onMouseEnter={() => {console.log("over menu");setMenu(true); }}
-        onMouseLeave={() => {console.log("out of menu"); setMenu(false); }}
+        onMouseEnter={() => {
+          console.log("over menu");
+          setMenu(true);
+        }}
+        onMouseLeave={() => {
+          console.log("out of menu");
+          setMenu(false);
+        }}
         className="
         absolute
          z-10
@@ -154,8 +175,14 @@ const Frame: React.FC<Props> = ({ frame }) => {
         {frame?.name}
       </div>
       <div
-          onMouseEnter={() => {console.log("over menu");setMenu(true); }}
-          onMouseLeave={() => {console.log("out of menu"); setMenu(false); }}
+        onMouseEnter={() => {
+          console.log("over menu");
+          setMenu(true);
+        }}
+        onMouseLeave={() => {
+          console.log("out of menu");
+          setMenu(false);
+        }}
         className="
           absolute
           top-1
@@ -184,18 +211,16 @@ const Frame: React.FC<Props> = ({ frame }) => {
         />
       </div>
 
-      <div 
-      
-      className="h-full w-full">
-        {menu==false && dragging == true ?
+      <div className="h-full w-full">
+        {(menu == false && dragging == true) || updateFrameOpen == true ? (
           <div className="bg-gray h-full w-full text-black/90 flex justify-center items-center text-md flex-col gap-5">
-              Resizing
-              <div className="h-10 w-10 bg-black/90 animate-spin"></div>
+            Resizing
+            <div className="h-10 w-10 bg-black/90 animate-spin"></div>
           </div>
-          :
+        ) : (
           <webview
             src={frame?.link}
-            id="webview-frame-main"
+            id={`${id}`}
             className="
           h-full
           w-full
@@ -205,7 +230,7 @@ const Frame: React.FC<Props> = ({ frame }) => {
           shadow-md
         "
           />
-        }
+        )}
       </div>
 
       <UpdateFrame

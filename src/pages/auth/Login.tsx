@@ -51,7 +51,7 @@ export const Login = () => {
       // alert(`${token}`);
       if (token) {
         localStorage.setItem("uid", token);
-        navigate("/dashboard");
+        window.location.reload();
       }
     });
   }, [navigate, ipcRenderer]);

@@ -85,8 +85,11 @@ if (!gotTheLock) {
       win.webContents.send("uid", uid);
       return;
     }
+
+  
   });
 }
+
 app.on("open-url", (event, url) => {
   const uid = url?.split("=")[1];
 
@@ -100,6 +103,7 @@ app.on("open-url", (event, url) => {
     win.webContents.send("uid", uid);
     return;
   }
+
 });
 
 app.on("window-all-closed", () => {

@@ -75,7 +75,7 @@ const Group: React.FC<IGroupPorps> = ({
         ease-in-out
         `}
         style={{
-          backgroundColor: group?.color || "#",
+          backgroundColor: group?.color || "#22092C",
         }}
       >
         <Link

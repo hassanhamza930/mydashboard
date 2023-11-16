@@ -48,6 +48,10 @@ const AddNewGroup: React.FC<Props> = ({ open, setOpen }) => {
       toast.error("Name cannot be empty...");
       return;
     }
+    if (selectedColor?.trim() === "") {
+      toast.error("Please select a color...");
+      return;
+    }
     setOpen(false);
 
     await setDoc(

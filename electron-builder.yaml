@@ -1,5 +1,6 @@
 directories:
   output: release
+
 appId: "eu.agilesoftwaredesign.mydashboard"
 # asarUnpack: '**/resources/some-native-binary'
 productName: MyDashboard
@@ -11,17 +12,21 @@ files:
     to: "."
     filter: main.js
   - dist
-  # - resources/
   - index.html
   - embedded.provisionprofile
+
+
+win:
+  icon: "./build/icon.png"
+  
   
 mac:
   hardenedRuntime: true
   gatekeeperAssess: true  
+  icon: "./build/icon.png"
   category: public.app-category.productivity
   entitlements: build/entitlements.mac.plist
   identity: 'Agile Software Design GmbH (3JK72P98Z7)'
-  # icon: resources/app.icns
   target:
     - target: zip
       arch:

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getFirestore } from "firebase/firestore";
+import { Timestamp, getFirestore } from "firebase/firestore";
 import { motion } from "framer-motion";
 //
 import { fetchGroups } from "../helper/groups";
@@ -66,7 +66,7 @@ export const Dashboard = () => {
                 visible: { opacity: 1, x: 0 },
                 hidden: { opacity: 0, x: 20 },
               }}
-              key={group.id + index}
+              key={group.id + `${Timestamp.now().toMillis()}`}
             >
               <Group key={group.id + index} options group={group} />
             </motion.div>

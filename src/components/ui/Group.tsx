@@ -1,5 +1,11 @@
 import { motion } from "framer-motion";
-import { getFirestore } from "firebase/firestore";
+import {
+  collection,
+  getFirestore,
+  onSnapshot,
+  query,
+  where,
+} from "firebase/firestore";
 import React, { useEffect } from "react";
 import * as FaIcon from "lucide-react";
 import { BiDotsVerticalRounded } from "react-icons/bi";
@@ -8,7 +14,6 @@ import { Link } from "react-router-dom";
 import UpdateGroup from "../modals/UpdateGroup";
 import GroupMenu from "../DropDowns/GroupMenu";
 import { IGroup } from "../../types";
-import { fetchFrames } from "../../helper/frames";
 
 interface IGroupPorps {
   opened?: boolean;
@@ -29,15 +34,26 @@ const Group: React.FC<IGroupPorps> = ({
   const [loading, setLoading] = React.useState(false);
   const [frames, setFrames] = React.useState([]);
   const [isFramesOpen, setIsFramesOpen] = React.useState(false);
-  const db = getFirestore();
 
-  useEffect(
-    () => {
-      fetchFrames(db, group.id, setLoading, setFrames);
-    },
-    // eslint-disable-next-line
-    []
-  );
+  useEffect(() => {
+    const fetchFrames = async (groupId) => {
+      setLoading(true);
+      const db = getFirestore();
+      const framesRef = collection(db, "frames");
+      const framesQuery = query(
+        framesRef,
+        where("user", "==", localStorage.getItem("uid")),
+        where("groupId", "==", groupId)
+      );
+
+      onSnapshot(framesQuery, (snapshot) => {
+        const frames = snapshot.docs.map((doc) => doc.data() as any);
+        setFrames(frames);
+        setLoading(false);
+      });
+    };
+    fetchFrames(group.id);
+  }, [group.id]);
   return (
     <div className="relative w-full ">
       <div
@@ -59,7 +75,7 @@ const Group: React.FC<IGroupPorps> = ({
         ease-in-out
         `}
         style={{
-          backgroundColor: group?.color || "#",
+          backgroundColor: group?.color || "#22092C",
         }}
       >
         <Link

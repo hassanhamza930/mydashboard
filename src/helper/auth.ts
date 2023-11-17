@@ -67,7 +67,7 @@ export const handleLogin = async (
         toast.success("Logged in successfully");
         const { uid } = user.user;
         localStorage.setItem("uid", uid);
-        navigate("/dashboard");
+        window.location.reload();
       }
     })
     .catch((error) => {
@@ -126,7 +126,7 @@ export const handleSignUp = async (
       });
 
     toast.success("Account created successfully");
-    navigate("/dashboard");
+    window.location.reload();
   } catch (error: any) {
     //console.log(error);
     toast.error(error.code);

@@ -1,11 +1,21 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { twMerge } from "tailwind-merge";
+import { ring } from "ldrs";
 
 interface Props extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: React.ReactNode;
+  loading?: boolean;
 }
 
-const Button: React.FC<Props> = ({ children, className, ...rest }) => {
+const Button: React.FC<Props> = ({
+  children,
+  loading = false,
+  className,
+  ...rest
+}) => {
+  useEffect(() => {
+    ring.register();
+  }, []);
   return (
     <button
       className={twMerge(
@@ -29,9 +39,21 @@ const Button: React.FC<Props> = ({ children, className, ...rest }) => {
         `,
         className
       )}
+      disabled={loading}
       {...rest}
     >
-      {children}
+      {loading ? (
+        // Default values shown
+        <l-ring
+          size="25"
+          stroke="3"
+          bg-opacity="0"
+          speed="2"
+          color="white"
+        ></l-ring>
+      ) : (
+        <>{children}</>
+      )}
     </button>
   );
 };

@@ -26,6 +26,7 @@ export const Login = () => {
   // states
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(false);
   const auth = getAuth();
 
   const navigate = useNavigate();
@@ -50,7 +51,7 @@ export const Login = () => {
       // alert(`${token}`);
       if (token) {
         localStorage.setItem("uid", token);
-        navigate("/dashboard");
+        window.location.reload();
       }
     });
   }, [navigate, ipcRenderer]);
@@ -124,12 +125,15 @@ export const Login = () => {
             </div>
 
             <Button
-              onClick={(e) => {
+              loading={loading}
+              onClick={async (e) => {
                 if (email == "" || password == "") {
                   toast.error("Please enter the email and password properly");
                   return;
                 }
-                handleLogin(e, email, password, navigate);
+                setLoading(true);
+                await handleLogin(e, email, password, navigate);
+                setLoading(false);
               }}
               className="max-w-[300px] my-10"
             >

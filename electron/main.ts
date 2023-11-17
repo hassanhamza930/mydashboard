@@ -34,11 +34,12 @@ function createWindow() {
   win = new BrowserWindow({
     width: 2500,
     height: 1500,
-    icon: path.join(process.env.PUBLIC, "electron-vite.svg"),
+    // icon: path.join(process.env.PUBLIC, "electron-vite.svg"),
     webPreferences: {
       preload: path.join(__dirname, "preload.js"),
       webviewTag: true,
     },
+    autoHideMenuBar:true
   });
 
   // Test active push message to Renderer-process.
@@ -85,8 +86,11 @@ if (!gotTheLock) {
       win.webContents.send("uid", uid);
       return;
     }
+
+  
   });
 }
+
 app.on("open-url", (event, url) => {
   const uid = url?.split("=")[1];
 
@@ -100,6 +104,7 @@ app.on("open-url", (event, url) => {
     win.webContents.send("uid", uid);
     return;
   }
+
 });
 
 app.on("window-all-closed", () => {

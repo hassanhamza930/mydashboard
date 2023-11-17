@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { doc, getFirestore, setDoc } from "firebase/firestore";
 import validator from "validator";
@@ -20,12 +20,17 @@ interface Props {
 const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
   const db = getFirestore(firebaseApp);
   const user = useUser();
+  const [loading, setLoading] = useState<boolean>(false);
   const [link, setLink] = useState(frameData?.link);
-  const [errorMessages, setErrorMessages] = useState<string>();
+  const [errorMessages, setErrorMessages] = useState<{
+    type: "LINK" | "NAME" | "";
+    message: string;
+  }>({
+    type: "",
+    message: "",
+  });
   const [frame, setFrame] = useState<string>(frameData?.link);
   const [name, setName] = useState<string>(frameData?.name);
-  const [width, setWidth] = useState<number>(frameData?.width);
-  const [height, setHeight] = useState<number>(frameData?.height);
   const [yPosition, setYPosition] = useState<number>(frameData?.yPosition);
   const [xPosition, setXPosition] = useState<number>(frameData?.xPosition);
   const [zoom, setZoom] = useState<number>(frameData?.zoom);
@@ -33,15 +38,38 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
   // handlers
   const addNewFrame = async () => {
     if (link === "") {
-      setErrorMessages("Link is required");
+      setErrorMessages({
+        type: "LINK",
+        message: "Link is required",
+      });
       return;
     }
     if (validator.isURL(link) === false) {
-      setErrorMessages("Link is not valid url format eg: https://example.com");
+      setErrorMessages({
+        type: "LINK",
+        message: "Link is not valid url format eg: https://example.com",
+      });
       return;
     }
+
+    if (name === "") {
+      setErrorMessages({
+        type: "NAME",
+        message: "Name is required",
+      });
+      return;
+    }
+
+    setOpen(false);
     const id = frameData.id;
     const docRef = doc(db, "frames", id);
+
+    console.log({
+      name,
+      yPosition,
+      xPosition,
+      zoom,
+    });
 
     await setDoc(
       docRef,
@@ -50,13 +78,11 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
         groupId: frameData.groupId,
         link: frame,
         name,
-        width,
-        height,
         yPosition,
         xPosition,
         zoom,
         id: id,
-      } as IFrame,
+      } as Partial<IFrame>,
       {
         merge: true,
       }
@@ -70,41 +96,55 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
     setOpen(false);
   };
 
-  const handleYScroll = () => {
-    const webView = document.getElementById("webview-frame-update");
+  const handleYScroll = useCallback(() => {
+    const webView = document.getElementById(
+      `webview-frame-update ${frameData.id}`
+    );
     if (!webView) return;
     // @ts-ignore
     webView.executeJavaScript(`window.scrollTo(${xPosition}, ${yPosition})`);
-  };
+  }, [xPosition, yPosition, frameData]);
 
-  const handleXScroll = () => {
-    const webView = document.getElementById("webview-frame-update");
+  const handleXScroll = useCallback(() => {
+    const webView = document.getElementById(
+      `webview-frame-update ${frameData.id}`
+    );
+
+    console.log("2");
     if (!webView) return;
+    console.log("3");
     // @ts-ignore
     webView.executeJavaScript(`window.scrollTo(${xPosition}, ${yPosition})`);
-  };
+  }, [xPosition, yPosition, frameData]);
 
-  function setZoomFactor(zoomFactor) {
-    const webView = document.getElementById("webview-frame-update");
-    console.log("run0");
+  const setZoomFactor = useCallback(
+    (zoomFactor: number) => {
+      const webView = document.getElementById(
+        `webview-frame-update ${frameData.id}`
+      );
 
-    if (!webView) return;
-    console.log("run1");
-    // @ts-ignore
-    webView.setZoomFactor(zoomFactor);
-  }
+      if (!webView) return;
+      // @ts-ignore
+      webView.setZoomFactor(zoomFactor);
+    },
+    [frameData]
+  );
 
   useEffect(() => {
-    if (frameData?.zoom) {
-      setZoomFactor(zoom);
-      handleXScroll();
-      handleYScroll();
-    }
-  }, [frameData]);
+    setZoomFactor(zoom);
+    handleXScroll();
+    handleYScroll();
+  }, [frameData, handleXScroll, handleYScroll, zoom, setZoomFactor]);
+
+  useEffect(() => {
+    setZoomFactor(zoom);
+    handleXScroll();
+    handleYScroll();
+  }, [yPosition, xPosition, zoom]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="bg-white min-w-[90vw] max-w-[90vw] h-[90vh]">
+      <DialogContent className="bg-white min-w-[60vw] max-w-[90vw] h-[70vh]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-left">
             Update Frame
@@ -119,7 +159,7 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
                 placeholder="Frame link"
                 value={link}
                 onChange={(e) => {
-                  setErrorMessages("");
+                  setErrorMessages({ type: "", message: "" });
                   setLink(e.target.value);
                 }}
               />
@@ -129,15 +169,21 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
                 onClick={(e) => {
                   e.preventDefault();
 
-                  setErrorMessages("");
+                  setErrorMessages({ type: "", message: "" });
+
                   if (link === "") {
-                    setErrorMessages("Link is required");
+                    setErrorMessages({
+                      type: "LINK",
+                      message: "Link is required",
+                    });
                     return;
                   }
                   if (validator.isURL(link) === false) {
-                    setErrorMessages(
-                      "Link is not valid url format eg: https://example.com"
-                    );
+                    setErrorMessages({
+                      type: "LINK",
+                      message:
+                        "Link is not valid url format eg: https://example.com",
+                    });
                     return;
                   }
                   if (link.startsWith("https://") === false) {
@@ -150,8 +196,8 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
                 <FaSearch className="text-gray-400" />
               </button>
             </form>
-            {errorMessages && (
-              <div className="text-red-500 text-xs">{errorMessages}</div>
+            {errorMessages.type === "LINK" && (
+              <p className="text-red-500 text-xs">{errorMessages.message}</p>
             )}
           </div>
           <hr className="my-4" />
@@ -170,7 +216,7 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
               className="
               w-1/2
               overflow-y-auto
-              h-[70vh]
+              h-[50vh]
               rounded-xl
               p-3
               "
@@ -189,8 +235,6 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
                     gap-3
                     border
                     border-slate-400
-                    
-                    mb-3
                     "
                 >
                   <input
@@ -205,8 +249,13 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
                     "
                   />
                 </div>
+                {errorMessages.type === "NAME" && (
+                  <p className="text-red-500 text-xs">
+                    {errorMessages.message}
+                  </p>
+                )}
                 {/* name - end */}
-                <div
+                {/* <div
                   className=" w-full bg-white rounded-xl p-3  gap-3 border border-slate-400  mb-3
                     "
                 >
@@ -253,9 +302,9 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
                       />
                     </div>
                   </div>
-                </div>
+                </div> */}
                 <div
-                  className=" w-full bg-white rounded-xl p-3  gap-3 border border-slate-400  mb-3
+                  className=" w-full bg-white rounded-xl p-3  gap-3 border border-slate-400  my-3
                     "
                 >
                   <label
@@ -371,16 +420,11 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
             </div>
 
             {/* frame */}
-            <div
-              className=" h-[70vh]  overflow-y-auto "
-              style={{
-                width: `${width}px`,
-              }}
-            >
+            <div className=" overflow-y-auto w-full">
               <div
                 style={{
                   width: `100%`,
-                  height: `${height}px`,
+                  height: `50vh`,
                 }}
                 className={`
               rounded-xl
@@ -390,9 +434,10 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
               >
                 {frame ? (
                   <webview
-                    id="webview-frame-update"
+                    id={`webview-frame-update ${frameData.id}`}
                     src={frame}
                     className="
+
                 w-full
                 bg-slate-200
                 rounded-xl
@@ -416,8 +461,11 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
               <span className="text-darkgray">cancel</span>
             </Button>
             <Button
+              loading={loading}
               onClick={async () => {
+                setLoading(true);
                 await addNewFrame();
+                setLoading(false);
               }}
             >
               <span className="text-white">Update</span>

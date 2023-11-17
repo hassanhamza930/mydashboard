@@ -19,9 +19,6 @@ interface Props {
 }
 
 export const colors = [
-  { id: 1, hex: "#87CEEB" },
-  { id: 2, hex: "#E6E6FA" },
-  { id: 3, hex: "#98FB98" },
   { id: 4, hex: "#DAA520" },
   { id: 5, hex: "#DC143C" },
   { id: 6, hex: "#708090" },
@@ -39,13 +36,23 @@ const AddNewGroup: React.FC<Props> = ({ open, setOpen }) => {
   const [selectedIcon, setSelectedIcon] = useState<string>("AccessibilityIcon");
   const [isIconSelectorOpen, setIsIconSelectorOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState("");
-
+  const [loading, setLoading] = useState(false);
   const [IconSelected] = [lucidIcon[selectedIcon]];
 
   // handlers
   const addNewGroup = async () => {
     const id = uuid();
     const docRef = doc(db, "groups", id); // Use the generated ID as the document ID
+
+    if (name?.trim() === "") {
+      toast.error("Name cannot be empty...");
+      return;
+    }
+    if (selectedColor?.trim() === "") {
+      toast.error("Please select a color...");
+      return;
+    }
+    setOpen(false);
 
     await setDoc(
       docRef,
@@ -124,9 +131,11 @@ const AddNewGroup: React.FC<Props> = ({ open, setOpen }) => {
             <span className="text-darkgray">cancel</span>
           </Button>
           <Button
-            onClick={() => {
-              addNewGroup();
-              setOpen(false);
+            loading={loading}
+            onClick={async () => {
+              setLoading(true);
+              await addNewGroup();
+              setLoading(false);
             }}
           >
             <span className="text-white">Create</span>

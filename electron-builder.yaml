@@ -5,7 +5,7 @@ appId: "eu.agilesoftwaredesign.mydashboard"
 # asarUnpack: '**/resources/some-native-binary'
 productName: MyDashboard
 
-
+asar: true
 files:
   - dist-electron
   - from: dist-electron/
@@ -14,6 +14,9 @@ files:
   - dist
   - index.html
   - embedded.provisionprofile
+  - build/entitlements.mas.inherit.plist
+  - build/entitlements.mac.plist
+  - build/entitlements.mas.plist
 
 
 win:
@@ -21,19 +24,28 @@ win:
   
   
 mac:
+  type: distribution
   hardenedRuntime: true
-  gatekeeperAssess: true  
+  gatekeeperAssess: false
   icon: "./build/icon.png"
+  artifactName: ${productName}-${version}-${os}.${ext}
   category: public.app-category.productivity
-  entitlements: build/entitlements.mac.plist
-  identity: 'Agile Software Design GmbH (3JK72P98Z7)'
+  provisioningProfile: embedded.provisionprofile
+#  identity: 'Agile Software Design GmbH (3JK72P98Z7)'
   target:
-    - target: zip
+#    - mas
+#    - pkg
+#    - dmg
+    - target: mas
       arch:
         - x64
         - arm64
 
     - target: dmg
+      arch:
+        - x64
+        - arm64
+    - target: pkg
       arch:
         - x64
         - arm64
@@ -43,8 +55,9 @@ mac:
 ##     - mas
 
 
-# mas:
-#   type: distribution
-#   category: public.app-category.productivity
-#   entitlements: build/entitlements.mas.plist
-#   icon: resources/app.icns
+mas:
+  hardenedRuntime: false
+  type: distribution
+  category: public.app-category.productivity
+  entitlements: build/entitlements.mas.plist
+  entitlementsInherit: build/entitlements.mas.inherit.plist

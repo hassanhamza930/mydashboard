@@ -18,6 +18,9 @@ files:
 
 win:
   icon: "./build/icon.png"
+
+mac:
+  icon: "./build/icon.png"
   
   
 mac:

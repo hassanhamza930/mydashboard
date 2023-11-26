@@ -5,6 +5,7 @@ import { deleteDoc, doc, getFirestore, updateDoc } from "firebase/firestore";
 import FrameMenu from "../DropDowns/FrameMenu";
 import toast from "react-hot-toast";
 import UpdateFrame from "../modals/UpdateFrame";
+import { Loader } from "lucide-react";
 
 interface Props {
   frame: IFrame;
@@ -17,6 +18,8 @@ const Frame: React.FC<Props> = ({ frame }) => {
   const db = getFirestore();
   const [dragging, setDragging] = useState(false);
   const [menu, setMenu] = useState(false);
+  const [loadingFrame, setLoadingFrame] = useState(true);
+
   const id = useId();
 
   const deleteFrame = async () => {
@@ -123,6 +126,12 @@ const Frame: React.FC<Props> = ({ frame }) => {
     };
   }, [frame, resizeDiv]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      setLoadingFrame(false);
+    }, 1000);
+  }, []);
+
   return (
     <div
       id="resizableDiv"
@@ -216,6 +225,10 @@ const Frame: React.FC<Props> = ({ frame }) => {
           <div className="bg-gray h-full w-full text-black/90 flex justify-center items-center text-md flex-col gap-5">
             Resizing
             <div className="h-10 w-10 bg-black/90 animate-spin"></div>
+          </div>
+        ) : loadingFrame ? (
+          <div className="flex justify-center items-center h-full">
+            <Loader className="animate-spin" />
           </div>
         ) : (
           <webview

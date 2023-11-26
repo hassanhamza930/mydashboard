@@ -38,7 +38,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
 
   // handlers
   const addNewFrame = async () => {
-    if (link === "") {
+    if (link === "" || frame === "") {
       setErrorMessages({
         type: "LINK",
         message: "Link is required",
@@ -89,6 +89,12 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
       .catch((err) => {
         toast.error(err.message);
       });
+    setFrame("");
+    setName("");
+    setLoading(false);
+    setYPosition(0);
+    setXPosition(0);
+    setZoom(0);
     setOpen(false);
   };
 

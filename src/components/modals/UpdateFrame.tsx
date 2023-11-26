@@ -37,7 +37,7 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
 
   // handlers
   const addNewFrame = async () => {
-    if (link === "") {
+    if (link === "" || frame === "") {
       setErrorMessages({
         type: "LINK",
         message: "Link is required",

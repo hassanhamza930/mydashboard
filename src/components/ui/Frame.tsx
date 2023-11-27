@@ -51,6 +51,7 @@ const Frame: React.FC<Props> = ({ frame }) => {
       handleWebViewAction((webView) => {
         // @ts-ignore
         webView.setZoomFactor(zoomFactor);
+        setLoadingFrame(false);
       });
     };
 
@@ -58,6 +59,7 @@ const Frame: React.FC<Props> = ({ frame }) => {
       handleWebViewAction((webView) => {
         // @ts-ignore
         webView.executeJavaScript(`window.scrollTo(${frame.xPosition}, 0)`);
+        setLoadingFrame(false);
       });
     };
 
@@ -126,11 +128,11 @@ const Frame: React.FC<Props> = ({ frame }) => {
     };
   }, [frame, resizeDiv]);
 
-  useEffect(() => {
-    setTimeout(() => {
-      setLoadingFrame(false);
-    }, 1000);
-  }, []);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setLoadingFrame(false);
+  //   }, 1000);
+  // }, []);
 
   return (
     <div
@@ -160,6 +162,12 @@ const Frame: React.FC<Props> = ({ frame }) => {
         overflow: "auto",
       }}
     >
+      <Loader
+        className={`animate-spin absolute
+          right-[50%]
+          top-[50%]
+          ${loadingFrame ? "block" : "hidden"}  h-5 w-5 text-gray-600`}
+      />
       <div
         onMouseEnter={() => {
           console.log("over menu");
@@ -226,22 +234,19 @@ const Frame: React.FC<Props> = ({ frame }) => {
             Resizing
             <div className="h-10 w-10 bg-black/90 animate-spin"></div>
           </div>
-        ) : loadingFrame ? (
-          <div className="flex justify-center items-center h-full">
-            <Loader className="animate-spin" />
-          </div>
         ) : (
           <webview
             src={frame?.link}
             id={`${id}`}
-            className="
+            className={`
           h-full
           w-full
           resize-both
           overflow-auto
           rounded-xl
           shadow-md
-        "
+          ${loadingFrame && "hidden"}
+        `}
           />
         )}
       </div>

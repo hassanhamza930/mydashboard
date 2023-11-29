@@ -136,11 +136,11 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
         </DialogHeader>
         <div className="">
           <div className="w-full">
-            <form className="flex gap-x-4">
+            <form className="flex gap-x-4 mb-2">
               <input
                 type="text"
-                className="w-full bg-transparent border-slate-400 border rounded-xl p-3  px-8 "
-                placeholder="Frame link"
+                className="w-96 bg-transparent border-slate-400 border rounded-xl p-3  px-8 "
+                placeholder="https://google.com ..."
                 value={link}
                 onChange={(e) => {
                   setErrorMessages({ type: "", message: "" });

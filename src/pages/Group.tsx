@@ -81,18 +81,21 @@ export const Group = () => {
           </span>
         </div>
         <div className="flex items-center">
-          <AddNewButton
-            className="
+          {
+            <AddNewButton
+              className="
             bg-primary
             text-white
             font-medium
             text-sm
             focus:ring-primary
           "
-            onClick={() => setOpen(true)}
-          >
-            Add Frame
-          </AddNewButton>
+              onClick={() => setOpen(true)}
+              disabled={user.plan !== "pro" && frames.length >= 3}
+            >
+              Add Frame
+            </AddNewButton>
+          }
         </div>
       </div>
       {frames.length === 0 ? (

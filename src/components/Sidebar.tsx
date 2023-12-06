@@ -43,6 +43,7 @@ const Sidebar = () => {
         <AddNewButton
           className="text-md bg-primary text-white"
           onClick={handleClick}
+          disabled={user.plan !== "pro" && groups.length >= 3}
         >
           Add Group
         </AddNewButton>

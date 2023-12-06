@@ -3,6 +3,7 @@ export interface IUser {
   email: string;
   photoURL?: string;
   uid: string;
+  plan?: string;
 }
 
 export interface IGroup {

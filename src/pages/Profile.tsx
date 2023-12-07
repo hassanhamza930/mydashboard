@@ -91,6 +91,7 @@ export const Profile = () => {
           ) : (
             <Button
               onClick={() => {
+                updatePlan(user?.uid, "");
                 ipcRenderer.send(
                   "open-external-browser",
                   `https://my-dashboard-chi.vercel.app/subscriptions?plan=pro&uid=${user?.uid}&email=${user?.email}`

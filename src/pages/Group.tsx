@@ -91,7 +91,7 @@ export const Group = () => {
             focus:ring-primary
           "
               onClick={() => setOpen(true)}
-              disabled={user.plan !== "pro" && frames.length >= 3}
+              disabled={user?.plan !== "pro" && frames.length >= 3}
             >
               Add Frame
             </AddNewButton>

@@ -15,6 +15,7 @@ import AddNewButton from "../components/ui/AddNewButton";
 import AddNewFrame from "../components/modals/AddNewFrame";
 import Frame from "../components/ui/Frame";
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 
 export const Group = () => {
   //
@@ -90,8 +91,13 @@ export const Group = () => {
             text-sm
             focus:ring-primary
           "
-              onClick={() => setOpen(true)}
-              disabled={user?.plan !== "pro" && frames.length >= 3}
+              onClick={() => {
+                if (user?.plan !== "pro" && frames?.length >= 3) {
+                  toast.error("You can only create 3 frames in the free plan");
+                  return;
+                }
+                setOpen(true);
+              }}
             >
               Add Frame
             </AddNewButton>

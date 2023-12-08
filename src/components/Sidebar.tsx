@@ -10,6 +10,7 @@ import { IGroup } from "../types";
 import useUser from "../hooks/useUser";
 import { fetchGroups } from "../helper/groups";
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 
 const Sidebar = () => {
   // states
@@ -20,6 +21,10 @@ const Sidebar = () => {
 
   // handlers
   const handleClick = () => {
+    if (user?.plan !== "pro" && groups?.length >= 3) {
+      toast.error("You can only create 3 groups in the free plan");
+      return;
+    }
     setIsAddNewGroupOpen(true);
   };
 
@@ -43,7 +48,6 @@ const Sidebar = () => {
         <AddNewButton
           className="text-md bg-primary text-white"
           onClick={handleClick}
-          disabled={user?.plan !== "pro" && groups?.length >= 3}
         >
           Add Group
         </AddNewButton>

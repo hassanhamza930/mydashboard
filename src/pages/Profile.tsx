@@ -51,7 +51,22 @@ export const Profile = () => {
           type="text"
         />
       </div>
-      <div className="flex w-[50vw] justify-between mt-5 gap-x-5">
+      {user?.plan && (
+        <div className="flex justify-end max-w-[50vw]">
+          <Button
+            onClick={() => {
+              ipcRenderer.send(
+                "open-external-browser",
+                `https://billing.stripe.com/p/login/test_cN2aHR9N83qt36w6oo`
+              );
+            }}
+            className="w-fit text-sm font-medium mt-5"
+          >
+            Manage Subscription
+          </Button>
+        </div>
+      )}
+      <div className="flex max-w-[50vw] justify-between mt-5 gap-x-5">
         <div className="border border-slate-200 w-full p-8 rounded-xl">
           <p className="text-blue-700 font-bold ">DashPRO</p>
           <p className="flex my-4 text-5xl font-semibold text-blue-700 relative">
@@ -131,7 +146,10 @@ export const Profile = () => {
           ) : (
             <Button
               onClick={() => {
-                updatePlan(user?.uid, "free");
+                ipcRenderer.send(
+                  "open-external-browser",
+                  `https://billing.stripe.com/p/login/test_cN2aHR9N83qt36w6oo`
+                );
               }}
               className="w-fit text-sm font-medium mt-5 bg-gray-200 text-gray-500 "
             >

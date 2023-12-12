@@ -40,6 +40,7 @@ const Frame: React.FC<Props> = ({ frame }) => {
       if (webView) {
         webView.addEventListener("dom-ready", () => {
           action(webView);
+          console.log(frame.name+"ready")
         });
       }
     },
@@ -135,7 +136,17 @@ const Frame: React.FC<Props> = ({ frame }) => {
   // }, []);
 
   return (
-    <div
+    
+    <div className="relative  bg-slate-200">
+    <Loader
+        className={`animate-spin absolute
+          right-[50%]
+          top-[50%]
+          z-0
+          h-5 w-5
+          text-gray-600`}
+      />
+      <div
       id="resizableDiv"
       onMouseDown={() => {
         console.log("dragging");
@@ -149,7 +160,7 @@ const Frame: React.FC<Props> = ({ frame }) => {
         p-1
         rounded-xl
         shadow-sm
-        bg-slate-200
+       
         relative
         pt-8
       "
@@ -162,12 +173,8 @@ const Frame: React.FC<Props> = ({ frame }) => {
         overflow: "auto",
       }}
     >
-      <Loader
-        className={`animate-spin absolute
-          right-[50%]
-          top-[50%]
-          ${loadingFrame ? "block" : "hidden"}  h-5 w-5 text-gray-600`}
-      />
+      
+
       <div
         onMouseEnter={() => {
           console.log("over menu");
@@ -191,6 +198,7 @@ const Frame: React.FC<Props> = ({ frame }) => {
       >
         {frame?.name}
       </div>
+
       <div
         onMouseEnter={() => {
           console.log("over menu");
@@ -245,7 +253,7 @@ const Frame: React.FC<Props> = ({ frame }) => {
           overflow-auto
           rounded-xl
           shadow-md
-          ${loadingFrame && "hidden"}
+        
         `}
           />
         )}
@@ -256,6 +264,7 @@ const Frame: React.FC<Props> = ({ frame }) => {
         setOpen={setUpdateFrameOpen}
         frameData={frame}
       />
+    </div>
     </div>
   );
 };

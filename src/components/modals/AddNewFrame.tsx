@@ -71,12 +71,12 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
         user: user.uid,
         groupId: groupId,
         link: frame,
-        name,
+        name:name,
         width: 500,
         height: 500,
         yPosition,
         xPosition,
-        zoom,
+        zoom:zoom,
         id: id,
       } as IFrame,
       {
@@ -92,9 +92,9 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
     setFrame("");
     setName("");
     setLoading(false);
-    setYPosition(0);
-    setXPosition(0);
-    setZoom(0);
+    setYPosition(0.0);
+    setXPosition(0.0);
+    setZoom(1.0);
     setOpen(false);
   };
 

@@ -91,6 +91,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
       });
     setFrame("");
     setName("");
+    setLink("");
     setLoading(false);
     setYPosition(0.0);
     setXPosition(0.0);

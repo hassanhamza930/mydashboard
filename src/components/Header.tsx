@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const user = useUser();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
 
   return (
     <nav className=" ">
@@ -30,7 +30,12 @@ const Header = () => {
           /> */}
         </div>
         <div className="flex gap-x-5 justify-center items-center">
-          <div className="flex gap-x-2 justify-center items-center">
+          <div
+            className="flex gap-x-2 justify-center items-center cursor-pointer"
+            onClick={() => {
+              navigate("/profile");
+            }}
+          >
             <img
               className="
                     w-10
@@ -53,12 +58,6 @@ const Header = () => {
             </div>
           </div>
 
-          {/* <img
-            src={notification}
-            className="cursor-pointer"
-            onClick={() => {}}
-            alt=""
-          /> */}
           <img
             src={logout}
             className="cursor-pointer"

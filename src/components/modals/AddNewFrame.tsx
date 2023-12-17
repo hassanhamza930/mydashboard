@@ -38,7 +38,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
 
   // handlers
   const addNewFrame = async () => {
-    if (link === "") {
+    if (link === "" || frame === "") {
       setErrorMessages({
         type: "LINK",
         message: "Link is required",
@@ -71,12 +71,12 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
         user: user.uid,
         groupId: groupId,
         link: frame,
-        name,
+        name:name,
         width: 500,
         height: 500,
         yPosition,
         xPosition,
-        zoom,
+        zoom:zoom,
         id: id,
       } as IFrame,
       {
@@ -89,6 +89,13 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
       .catch((err) => {
         toast.error(err.message);
       });
+    setFrame("");
+    setName("");
+    setLink("");
+    setLoading(false);
+    setYPosition(0.0);
+    setXPosition(0.0);
+    setZoom(1.0);
     setOpen(false);
   };
 
@@ -130,11 +137,11 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
         </DialogHeader>
         <div className="">
           <div className="w-full">
-            <form className="flex gap-x-4">
+            <form className="flex gap-x-4 mb-2">
               <input
                 type="text"
-                className="w-full bg-transparent border-slate-400 border rounded-xl p-3  px-8 "
-                placeholder="Frame link"
+                className="w-96 bg-transparent border-slate-400 border rounded-xl p-3  px-8 "
+                placeholder="https://google.com ..."
                 value={link}
                 onChange={(e) => {
                   setErrorMessages({ type: "", message: "" });

@@ -2,7 +2,7 @@ import { Routes, Route, HashRouter } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 //
-import { Dashboard, Group, Layout, Login, SignUp } from "./pages";
+import { Dashboard, Group, Layout, Login, SignUp, Profile } from "./pages";
 
 function App() {
   const [logged, setlogged] = useState(false);
@@ -20,20 +20,19 @@ function App() {
     <>
       <HashRouter>
         <Routes>
-          {
-            logged==false ? (
-              <>
-                <Route path="/" element={<Login />} />
-                <Route path="/signup" element={<SignUp />} />
-              </>
-
-            ) :
-              <Route element={<Layout />}>
-                <Route path="/" element={<Dashboard />} />
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/group/:id" element={<Group />} />
-              </Route>
-          }
+          {logged == false ? (
+            <>
+              <Route path="/" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+            </>
+          ) : (
+            <Route element={<Layout />}>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/group/:id" element={<Group />} />
+              <Route path="/profile" element={<Profile />} />
+            </Route>
+          )}
 
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

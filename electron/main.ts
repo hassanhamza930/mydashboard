@@ -55,15 +55,14 @@ function createWindow() {
     // win.loadFile('dist/index.html')
     win.loadFile(path.join(process.env.DIST, "index.html"));
   }
+
+  win.on('closed', () => {
+    // Dereference the window object
+    win = null;
+  });
+
 }
-// const gotTheLock = app.requestSingleInstanceLock();
 
-// if (!gotTheLock) {
-//   app.quit();
-// } else {
-
-//   });
-// }
 ipcMain.on("open-external-browser", (event, data) => {
   shell.openExternal(data);
 });
@@ -107,14 +106,13 @@ app.on("open-url", (event, url) => {
 
 });
 
-app.on("window-all-closed", () => {
-  win = null;
-});
 
 app.whenReady().then(createWindow);
 
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
-    app.quit();
-  }
+
+app.on('window-all-closed', () => {
+
+  win = null;  
+  app.quit();
+  
 });

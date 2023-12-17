@@ -15,6 +15,7 @@ import AddNewButton from "../components/ui/AddNewButton";
 import AddNewFrame from "../components/modals/AddNewFrame";
 import Frame from "../components/ui/Frame";
 import { motion } from "framer-motion";
+import toast from "react-hot-toast";
 
 export const Group = () => {
   //
@@ -81,18 +82,26 @@ export const Group = () => {
           </span>
         </div>
         <div className="flex items-center">
-          <AddNewButton
-            className="
+          {
+            <AddNewButton
+              className="
             bg-primary
             text-white
             font-medium
             text-sm
             focus:ring-primary
           "
-            onClick={() => setOpen(true)}
-          >
-            Add Frame
-          </AddNewButton>
+              onClick={() => {
+                if (user?.plan !== "pro" && frames?.length >= 3) {
+                  toast.error("You can only create 3 frames in the free plan");
+                  return;
+                }
+                setOpen(true);
+              }}
+            >
+              Add Frame
+            </AddNewButton>
+          }
         </div>
       </div>
       {frames.length === 0 ? (

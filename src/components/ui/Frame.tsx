@@ -5,6 +5,7 @@ import { deleteDoc, doc, getFirestore, updateDoc } from "firebase/firestore";
 import FrameMenu from "../DropDowns/FrameMenu";
 import toast from "react-hot-toast";
 import UpdateFrame from "../modals/UpdateFrame";
+import { Loader } from "lucide-react";
 
 interface Props {
   frame: IFrame;
@@ -17,6 +18,8 @@ const Frame: React.FC<Props> = ({ frame }) => {
   const db = getFirestore();
   const [dragging, setDragging] = useState(false);
   const [menu, setMenu] = useState(false);
+  const [loadingFrame, setLoadingFrame] = useState(true);
+
   const id = useId();
 
   const deleteFrame = async () => {
@@ -37,6 +40,7 @@ const Frame: React.FC<Props> = ({ frame }) => {
       if (webView) {
         webView.addEventListener("dom-ready", () => {
           action(webView);
+          console.log(frame.name+"ready")
         });
       }
     },
@@ -48,6 +52,7 @@ const Frame: React.FC<Props> = ({ frame }) => {
       handleWebViewAction((webView) => {
         // @ts-ignore
         webView.setZoomFactor(zoomFactor);
+        setLoadingFrame(false);
       });
     };
 
@@ -55,6 +60,7 @@ const Frame: React.FC<Props> = ({ frame }) => {
       handleWebViewAction((webView) => {
         // @ts-ignore
         webView.executeJavaScript(`window.scrollTo(${frame.xPosition}, 0)`);
+        setLoadingFrame(false);
       });
     };
 
@@ -123,8 +129,24 @@ const Frame: React.FC<Props> = ({ frame }) => {
     };
   }, [frame, resizeDiv]);
 
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setLoadingFrame(false);
+  //   }, 1000);
+  // }, []);
+
   return (
-    <div
+    
+    <div className="relative  bg-slate-200">
+    <Loader
+        className={`animate-spin absolute
+          right-[50%]
+          top-[50%]
+          z-0
+          h-5 w-5
+          text-gray-600`}
+      />
+      <div
       id="resizableDiv"
       onMouseDown={() => {
         console.log("dragging");
@@ -138,7 +160,7 @@ const Frame: React.FC<Props> = ({ frame }) => {
         p-1
         rounded-xl
         shadow-sm
-        bg-slate-200
+       
         relative
         pt-8
       "
@@ -151,6 +173,8 @@ const Frame: React.FC<Props> = ({ frame }) => {
         overflow: "auto",
       }}
     >
+      
+
       <div
         onMouseEnter={() => {
           console.log("over menu");
@@ -174,6 +198,7 @@ const Frame: React.FC<Props> = ({ frame }) => {
       >
         {frame?.name}
       </div>
+
       <div
         onMouseEnter={() => {
           console.log("over menu");
@@ -221,14 +246,15 @@ const Frame: React.FC<Props> = ({ frame }) => {
           <webview
             src={frame?.link}
             id={`${id}`}
-            className="
+            className={`
           h-full
           w-full
           resize-both
           overflow-auto
           rounded-xl
           shadow-md
-        "
+        
+        `}
           />
         )}
       </div>
@@ -238,6 +264,7 @@ const Frame: React.FC<Props> = ({ frame }) => {
         setOpen={setUpdateFrameOpen}
         frameData={frame}
       />
+    </div>
     </div>
   );
 };

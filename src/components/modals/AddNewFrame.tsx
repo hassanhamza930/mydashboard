@@ -129,7 +129,7 @@ const AddNewFrame: React.FC<Props> = ({ open, setOpen, groupId }) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="bg-white min-w-[60vw] max-w-[90vw] h-[80vh]">
+      <DialogContent className="bg-white min-w-[60%]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-left">
             New Frame

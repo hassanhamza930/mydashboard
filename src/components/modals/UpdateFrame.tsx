@@ -144,7 +144,7 @@ const UpdateFrame: React.FC<Props> = ({ open, setOpen, frameData }) => {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="bg-white min-w-[60vw] max-w-[90vw] h-[70vh]">
+      <DialogContent className="bg-white min-w-[60%]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold text-left">
             Update Frame
